@@ -1,8 +1,12 @@
 {
-  "name": "testService",
+  "name": "caas-serverless-awsapi",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "serverless-domain-manager": "^2.6.0"
+  },
   "devDependencies": {
     "serverless-python-requirements": "^4.1.1"
   }

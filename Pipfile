@@ -5,9 +5,17 @@ name = "pypi"
 
 [packages]
 requests = "*"
-"boto3" = "*"
+boto3 = "*"
+pytest-mock = "*"
+smalluuid = "*"
 
 [dev-packages]
+pylint = "*"
+autopep8 = "*"
+rope = "*"
+pytest = "*"
+moto = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.6"

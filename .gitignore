@@ -15,9 +15,18 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.serverless
+*.pyc
+*.pyo
+__*cache__
+.pytest_cache
 
 # Serverless directories
 .serverless
 
 # Libraries
 node_modules
+
+# IDE artifacts
+.vscode
+.idea

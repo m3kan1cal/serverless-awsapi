@@ -1,5 +1,5 @@
-import json
 import os
+import json
 
 from todos import decimalencoder
 import boto3
@@ -7,19 +7,25 @@ import boto3
 dynamodb = boto3.resource('dynamodb')
 
 
-def search(event, context):
-    """Return the collection of items."""
+def get(event, context):
+    """Get item from the collection."""
 
-    # Fetch all items from the database.
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
-    result = table.scan()
+
+    # Fetch item from the database.
+    result = table.get_item(
+        Key={
+            'id': event['pathParameters']['id']
+        }
+    )
 
     # Create a response.
     response = {
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(result['Items'], cls=decimalencoder.DecimalEncoder)
+        "body": json.dumps(result['Item'],
+                           cls=decimalencoder.DecimalEncoder)
     }
 
     return response

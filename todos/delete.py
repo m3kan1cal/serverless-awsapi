@@ -1,25 +1,27 @@
-import json
 import os
 
-from todos import decimalencoder
 import boto3
 
 dynamodb = boto3.resource('dynamodb')
 
 
-def search(event, context):
-    """Return the collection of items."""
+def delete(event, context):
+    """Delete item in the collection."""
 
-    # Fetch all items from the database.
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
-    result = table.scan()
+
+    # Delete the item from the database.
+    table.delete_item(
+        Key={
+            'id': event['pathParameters']['id']
+        }
+    )
 
     # Create a response.
     response = {
         "isBase64Encoded": False,
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(result['Items'], cls=decimalencoder.DecimalEncoder)
     }
 
     return response
