@@ -1,27 +1,40 @@
 # For complete reference:
 # https://serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
-service: todos
+service: notes
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 provider:
   name: aws
   runtime: python3.6
-  stackName: caas-${self:service}-stack-${opt:stage, self:provider.stage}
-  apiName: caas-${self:service}-api-${opt:stage, self:provider.stage}
+  
+  # Note that VPC endpoint-enabled services should already have
+  # their VPC endpoints created and associated with route tables & traffic 
+  # related to the below subnets and security groups.
+  vpc:
+    securityGroupIds: # Must exist
+      - sg-0af559c383b18a488
+    subnetIds: # Must exist
+      - subnet-39b83462
+      - subnet-a64eb9c0
+      - subnet-dfbdb496
+  
+  stackName: stoic-${self:service}-stack-${opt:stage, self:provider.stage}
+  apiName: stoic-${self:service}-api-${opt:stage, self:provider.stage}
 
   stage: dev # Can be prod|test|dev
   region: us-west-2
   
-  stackTags: # Optional CF stack tags
-    app: caas
-  tags: # Optional service wide tags
-    app: caas
+  stackTags: # Optional CloudFormation stack tags
+    service: stoic-${self:service}
+  tags: # Optional service tags
+    service: stoic-${self:service}
 
   environment:
-    DYNAMODB_TABLE: caas-${self:service}-${opt:stage, self:provider.stage}
-    AWS_DEFAULT_REGION: us-west-2
+    DYNAMODB_TABLE: stoic-${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_GSI_USERID_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-userid-noteid-index
+    DYNAMODB_GSI_NOTEBOOK_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-notebook-noteid-index
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -32,75 +45,148 @@ provider:
         - "dynamodb:PutItem"
         - "dynamodb:UpdateItem"
         - "dynamodb:DeleteItem"
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      Resource: 
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/${self:provider.environment.DYNAMODB_GSI_USERID_NOTEID}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/${self:provider.environment.DYNAMODB_GSI_NOTEBOOK_NOTEID}"
+
+package:
+  exclude:
+    - .git/**
+    - .idea/**
+    - .vscode/**
+    - .pytest_cache/**
+    - tests/**
 
 functions:
-  search:
-    handler: todos/search.search
-    name: caas-${self:service}-search-lambda-${opt:stage, self:provider.stage}
-    events:
-    - http:
-        path: todos
-        method: get
-        cors: true
-
   create:
-    handler: todos/create.create
-    name: caas-${self:service}-create-lambda-${opt:stage, self:provider.stage}
+    handler: functions/handlers/create.create
+    name: stoic-${self:service}-create-lambda-${opt:stage, self:provider.stage}
     events:
-    - http:
-        path: todos
-        method: post
-        cors: true
+      - http:
+          path: notes
+          method: post
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
 
-  get:
-    handler: todos/get.get
-    name: caas-${self:service}-get-lambda-${opt:stage, self:provider.stage}
+  read:
+    handler: functions/handlers/read.read
+    name: stoic-${self:service}-read-lambda-${opt:stage, self:provider.stage}
     events:
-    - http:
-        path: todos/{id}
-        method: get
-        cors: true
+      - http:
+          path: notes/{id}
+          method: get
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
 
   update:
-    handler: todos/update.update
-    name: caas-${self:service}-update-lambda-${opt:stage, self:provider.stage}
+    handler: functions/handlers/update.update
+    name: stoic-${self:service}-update-lambda-${opt:stage, self:provider.stage}
     events:
-    - http:
-        path: todos/{id}
-        method: put
-        cors: true
+      - http:
+          path: notes/{id}
+          method: put
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
 
   delete:
-    handler: todos/delete.delete
-    name: caas-${self:service}-delete-lambda-${opt:stage, self:provider.stage}
+    handler: functions/handlers/delete.delete
+    name: stoic-${self:service}-delete-lambda-${opt:stage, self:provider.stage}
     events:
-    - http:
-        path: todos/{id}
-        method: delete
-        cors: true
-        
-    tags: # Function specific tags
-      app: caas
+      - http:
+          path: notes/{id}
+          method: delete
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
 
+  searchByUser:
+    handler: functions/handlers/search.search_by_user
+    name: stoic-${self:service}-search-by-user-lambda-${opt:stage, self:provider.stage}
+    events:
+      - http:
+          path: users/{id}/notes
+          method: get
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
+
+  searchByNotebook:
+    handler: functions/handlers/search.search_by_notebook
+    name: stoic-${self:service}-search-by-notebook-lambda-${opt:stage, self:provider.stage}
+    events:
+      - http:
+          path: notebooks/{id}/notes
+          method: get
+          cors: true
+    tags: # Optional function tags
+      service: stoic-${self:service}
+
+
+# Schema based on:
+# https://stackoverflow.com/questions/47289226/dynamodb-partition-key-choice-for-notes-app
+
+# Read Capacity:
+# (ITEM SIZE (rounded up to the next 4KB multiplier) / 4KB) * # of items
+# (Round up to the nearest 4 KB multiplier)
+
+# Write Capacity
+# (ITEM SIZE (rounded up to the next 1KB multiplier) / 1KB) * # of items
+# (Round up to the nearest 1 KB multiplier)
 resources:
   Resources:
-    TodosDynamoDbTable:
+    notesDynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
         AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
+          - AttributeName: noteId
+            AttributeType: S # String
+          - AttributeName: userId
+            AttributeType: S # String
+          - AttributeName: notebook
+            AttributeType: S # String
         KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
+          - AttributeName: noteId
+            KeyType: HASH # Partition key
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        GlobalSecondaryIndexes:
+          # To get all notes for a specified user.
+          - IndexName: ${self:provider.environment.DYNAMODB_GSI_USERID_NOTEID}
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH # Partition key
+              - AttributeName: noteId
+                KeyType: RANGE # Sort key
+            Projection:
+              NonKeyAttributes:
+                - text
+                - notebook
+              ProjectionType: INCLUDE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          # To get all notes of a specified notebook.
+          - IndexName: ${self:provider.environment.DYNAMODB_GSI_NOTEBOOK_NOTEID}
+            KeySchema:
+              - AttributeName: notebook
+                KeyType: HASH # Partition key
+              - AttributeName: noteId
+                KeyType: RANGE # Sort key
+            Projection:
+              NonKeyAttributes:
+                - userId
+                - text
+              ProjectionType: INCLUDE
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
 
 plugins:
   - serverless-python-requirements
@@ -108,12 +194,13 @@ plugins:
 
 custom:
   pythonRequirements:
-    dockerizePip: true
+    dockerizePip: true # For compiling 64-bit libraries
   stage: ${opt:stage, self:provider.stage}
   domains:
-    prod: stoic.caasapis.com
-    test: stoic-test.caasapis.com
-    dev: stoic-dev.caasapis.com
+    base: stoicapis.com
+    prod: athena.${self:custom.domains.base}
+    test: athena-test.${self:custom.domains.base}
+    dev: athena-dev.${self:custom.domains.base}
 
   # Domain manager plugin settings:
   # https://github.com/amplify-education/serverless-domain-manager#known-issues
@@ -122,4 +209,4 @@ custom:
     domainName: ${self:custom.domains.${self:custom.stage}}
     stage: ${self:custom.stage}
     createRoute53Record: true
-    certificateName: "*.caasapis.com"
+    certificateName: "*.${self:custom.domains.base}"

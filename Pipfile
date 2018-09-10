@@ -6,8 +6,8 @@ name = "pypi"
 [packages]
 requests = "*"
 boto3 = "*"
-pytest-mock = "*"
 smalluuid = "*"
+pyjwt = "*"
 
 [dev-packages]
 pylint = "*"
@@ -16,6 +16,7 @@ rope = "*"
 pytest = "*"
 moto = "*"
 pytest-mock = "*"
+tavern = "*"
 
 [requires]
 python_version = "3.6"
