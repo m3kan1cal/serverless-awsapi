@@ -3,46 +3,80 @@ title: AWS Serverless REST API with DynamoDB store in Python
 description: This example demonstrates how to setup a RESTful Web Service allowing you to create, list, get, update and delete Notes. DynamoDB is used to store the data.
 layout: Doc
 -->
-# Serverless REST API
+# Serverless Microservice via REST API
 
-This example demonstrates how to setup a [RESTful Web Services](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) allowing you to create, list, get, update and delete Notes. DynamoDB is used to store the data. This is just an example and of course you could use any data storage as a backend.
+This example demonstrates how to setup a [RESTful Web Service](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) wrapper around a Note-taking microserivce, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is just an example and of course you could use any data storage as a backend in true microservice fashion.
 
 ## Getting Dependencies
 
-### AWS credentials configured with correct permission
+### Docker
+You only need the community version, but you can pick which you want: https://www.docker.com/get-started 
 
-Appropriate credentials under a valid profile should be stored and configured in `~/.aws/credentials` on your local resource.
+This is to be able to run DynamoDB Local for development and testing purposes.
 
-### Pipenv for Python Package Management (not Virtual Environments)
+### Python 3 and Pipenv
+This microservice is built on a Python-based stack. Make sure you have an interpreter installed somewhere you can reference. Get one here: https://www.python.org/downloads/ 
 
-Pipenv (https://github.com/pypa/pipenv) should be installed and configured on your local resource. We use Docker for our containerized or virtual environments, but we use Pipenv for Python dependency management.
+Also, get Pipenv for a seamless `pip` and `virtualenv` experience. Get it here: https://pipenv.readthedocs.io/
 
-To ensure that all Python 3.* packages are installed for use in the project, run `pipenv install` against the `Pipfile` in the solution.
+### Node.js and npm
+We're using the Serverless framework with and AWS provider specified. It's built on Node.js, so we'll need it for some CLI commands. Get it here: https://nodejs.org/en/download/
+
+### AWS Account and Credentials
+This an AWS Lambda, API Gateway microservice. Makes sure you have an account and you've configured your `~/.aws.credentials` with an access ID and secret. For simplicity, give the IAM user admin access, but fine-tune for production deployments.
 
 ### Plugins Installed and Configured
 
 Serverless relies on Node.js and npm for package management. Make sure to have Node.js and npm installed and configured for us. To ensure all Node.js packages are installed run `npm install`.
 
-## Structure
+## Project Structure
 
-This service has a separate directory for all the note operations. For each operation exactly one file exists e.g. `functions/delete.py`. In each of these files there is exactly one function defined.
+This service has a separate directory for all the Note service operations, the functions. For each operation exactly one file exists e.g. `functions/delete.py`. In each of these files there is exactly one function defined, the handler.
 
-The idea behind the `notes` directory is that in case you want to create a service containing multiple resources e.g. users, notes, comments you could do so in the same service. While this is certainly possible you might consider creating a separate service for each resource. It depends on the use-case and your preference.
+The idea behind the `functions` directory is that in case you want to create a service containing multiple resources e.g. users, notes, comments you could do so in the same service. While this is certainly possible you might consider creating a separate service for each resource. It depends on the use-case and your preference.
 
-## Use-cases
+## End Result Microservice
 
-- API for a Web Application
-- API for a Mobile Application
+The end result is a self-contained, web-accessible microservice that is small, testable, customizable, scalable, resilient, monitor-able, clone-able, stateless, and fairly simple.
 
-## Setup
+It can be served up as multiple Lambda functions unified under a common domain (multiple APIs but one API proxy domain so consumers only need to remember one domain, regardless of how many functions and API Gateway endpoints exist). And we try to stick with the pattern of one service, one model, one service.
+
+It's built with some love using the following stack and tooling: 
+
+- AWS (Lambda, API Gateway, CloudFormation, CloudFront, CloudWatch, DynamoDB, IAM, Route53, Certificate Manager, VPC Endpoints)
+- [Serverless framework](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
+- [Docker](https://www.docker.com/get-started)
+- [Pipenv](https://pipenv.readthedocs.io/)
+- [Python 3.6](https://www.python.org/downloads/)
+- [Visual Studio Code](https://code.visualstudio.com/download)
+
+## Use-Cases
+
+- API for a Web apps
+- API for a Mobile apps
+- API for IoT apps
+- API for system-to-system interfaces
+
+## Setup Serverless
 
 ```bash
 npm install -g serverless
 ```
 
-## Deploying
+Verify that a current version is installed.
 
-In order to deploy the endpoint simply run
+```bash
+serverless --version
+```
+
+## Quickstart
+
+Get going here
+
+
+## Deploying to AWS
+
+In order to deploy the endpoint, creating a CloudFormation stack in the process, simply run:
 
 ```bash
 sls deploy -v --aws-profile YOUR_PROFILE --stage YOUR_STAGE
@@ -257,13 +291,11 @@ Distribution Domain Name
   dx7gtrgmdf73e.cloudfront.net
 ```
 
-## Deleting
+## Removing Deployment from AWS
 
 Add the delete commands here
 
 ## Testing
-
-Local testing of Lambda functions is a good practice. When testig locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/
 
 Talk about Unit Testing here
 
@@ -271,58 +303,49 @@ Talk about Integration Testing here
 
 Talk about considerations for testing like modifying settings and DynamoDB resource definitions
 
-### Create a Note from Local
+Local testing of Lambda functions is a good practice. When testig locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/
 
-```bash
-sls invoke local -f create --data '{"body": "{ \"text\": \"Do a test, fool!\" }"}'
-```
+## Usage of Microservice / API
 
-## Usage
-
-You can create, retrieve, update, or delete `notes` with the following commands:
+You can create, retrieve, update, or delete `notes` with the following commands.
 
 ### Create a Note
+
+With API:
 
 ```bash
 curl -X POST https://athena-dev.stoicapis.com/api/notes --data '{ "userId": "m3kan1cal", "notebook": "standard", "text": "Learn Serverless" }'
 ```
 
-No output
-
-### List all Notes
+With `sls` local:
 
 ```bash
-curl https://athena-dev.stoicapis.com/api/notes
+sls invoke local -f create --data '{"body": "{ \"text\": \"Do a test, fool!\" }"}'
 ```
 
-Example output:
-```bash
-[{"text":"Deploy my first service","userId":"ac90fe80-aa83-11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","userId":"20679390-aa85-11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
-```
+### Read a Note
 
-### Get one Note
+With API:
 
 ```bash
 # Replace the <id> part with a real id from your notes table
 curl https://athena-dev.stoicapis.com/api/notes/<id>
-```
 
-Example Result:
-```bash
 {"text":"Learn Serverless","userId":"ee6490d0-aa81-11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":false,"updatedAt":1479138570824}%
 ```
+
+With `sls` local:
 
 ### Update a Note
 
 ```bash
 # Replace the <id> part with a real id from your notes table
 curl -X PUT https://athena-dev.stoicapis.com/api/notes/<id> --data '{ "text": "Learn Serverless", "checked": true }'
-```
 
-Example Result:
-```bash
 {"text":"Learn Serverless","userId":"ee6490d0-aa81-11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":true,"updatedAt":1479138570824}%
 ```
+
+With `sls` local:
 
 ### Delete a Note
 
@@ -331,7 +354,27 @@ Example Result:
 curl -X DELETE https://athena-dev.stoicapis.com/api/notes/<id>
 ```
 
-No output
+With `sls` local:
+
+### Search all Notes from User
+
+```bash
+curl https://athena-dev.stoicapis.com/api/notes
+
+[{"text":"Deploy my first service","userId":"ac90fe80-aa83-11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","userId":"20679390-aa85-11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
+```
+
+With `sls` local:
+
+### Search all Notes from Notebook
+
+```bash
+curl https://athena-dev.stoicapis.com/api/notes
+
+[{"text":"Deploy my first service","userId":"ac90fe80-aa83-11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","userId":"20679390-aa85-11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
+```
+
+With `sls` local:
 
 ## Scaling
 
@@ -339,71 +382,73 @@ No output
 
 By default, AWS Lambda limits the total concurrent executions across all functions within a given region to 100. The default limit is a safety limit that protects you from costs due to potential runaway or recursive functions during initial development and testing. To increase this limit above the default, follow the steps in [To request a limit increase for concurrent executions](http://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html#increase-concurrent-executions-limit).
 
-### DynamoDB and VPC
+## DynamoDB
+
+### DynamoDB and VPC Endpoints
 
 We are deploying our microservice to a private VPC managed by our team. This means our Lambda functions will be running in the private VPC they are deployed to. DynamoDB is typically treated as a "public internet" AWS service, which means our Lambda functions can't talk to DynamoDB without some networking configurations. The easiest way to accomplish this is to make create a VPC endpoint for the DynamoDB service, which allows our private VPC to communicate with the DynamoDB service without having to go through the interwebs; we take security and privacy very seriously.
 
 A few things need to be in place for our Lambda functions, in our private VPC, to talk with the DynamoDB service. The steps below are a quickstart approach, but more details can be found here: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html#vpc-endpoints-dynamodb-tutorial.create-endpoint
 
-- Make sure you have a main routing table in your AWS VPC that allows the proper network traffic.
+1. Make sure you have a main routing table in your AWS VPC that allows the proper network traffic.
 
-- Using AWS CLI, verify that DynamoDB is an available service for creating VPC endpoints in the current AWS region.
+2. Using AWS CLI, verify that DynamoDB is an available service for creating VPC endpoints in the current AWS region.
 
-  ```bash
-  aws ec2 describe-vpc-endpoint-services
-  
-  {
-      "ServiceNames": [
-          "com.amazonaws.us-east-1.s3",
-          "com.amazonaws.us-east-1.dynamodb"
-      ]
-  }
-  ```
+    ```bash
+    aws ec2 describe-vpc-endpoint-services
+    
+    {
+        "ServiceNames": [
+            "com.amazonaws.us-west-2.s3",
+            "com.amazonaws.us-west-2.dynamodb"
+        ]
+    }
+    ```
 
-- Determine your VPC identifier to build your VPC endpoint in.
+3. Determine your VPC identifier to build your VPC endpoint in.
 
-  ```bash
-  aws ec2 describe-vpcs
-  
-  {
-      "Vpcs": [
-          {
-              "VpcId": "vpc-0bbc736e", 
-              "InstanceTenancy": "default", 
-              "State": "available", 
-              "DhcpOptionsId": "dopt-8454b7e1", 
-              "CidrBlock": "172.31.0.0/16", 
-              "IsDefault": true
-          }
-      ]
-  }
-  ```
+    ```bash
+    aws ec2 describe-vpcs
 
-- Create the DynamoDB VPC endpoint.
+    {
+        "Vpcs": [
+            {
+                "VpcId": "vpc-0bbc736e", 
+                "InstanceTenancy": "default", 
+                "State": "available", 
+                "DhcpOptionsId": "dopt-8454b7e1", 
+                "CidrBlock": "172.31.0.0/16", 
+                "IsDefault": true
+            }
+        ]
+    }
+    ```
 
-  ```bash
-  aws ec2 create-vpc-endpoint --vpc-id YOUR_VPC_ID --service-name com.amazonaws.YOUR_AWS-REGION.dynamodb --route-table-ids YOUR_ROUTE_TABLE_IDS
+4. Create the DynamoDB VPC endpoint.
 
-  {
-      "VpcEndpoint": {
-          "VpcEndpointId": "vpce-0f8c1f5da4a1afe69",
-          "VpcEndpointType": "Gateway",
-          "VpcId": "vpc-9bea4efd",
-          "ServiceName": "com.amazonaws.us-west-2.dynamodb",
-          "State": "available",
-          "PolicyDocument": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}",
-          "RouteTableIds": [
-              "rtb-0b644314ae3e5d2f1"
-          ],
-          "SubnetIds": [],
-          "Groups": [],
-          "PrivateDnsEnabled": false,
-          "NetworkInterfaceIds": [],
-          "DnsEntries": [],
-          "CreationTimestamp": "2018-09-07T00:42:40Z"
-      }
-  }
-  ```
+    ```bash
+    aws ec2 create-vpc-endpoint --vpc-id YOUR_VPC_ID --service-name com.amazonaws.YOUR_AWS-REGION.dynamodb --route-table-ids YOUR_ROUTE_TABLE_IDS
+
+    {
+        "VpcEndpoint": {
+            "VpcEndpointId": "vpce-0f8c1f5da4a1afe69",
+            "VpcEndpointType": "Gateway",
+            "VpcId": "vpc-9bea4efd",
+            "ServiceName": "com.amazonaws.us-west-2.dynamodb",
+            "State": "available",
+            "PolicyDocument": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}",
+            "RouteTableIds": [
+                "rtb-0b644314ae3e5d2f1"
+            ],
+            "SubnetIds": [],
+            "Groups": [],
+            "PrivateDnsEnabled": false,
+            "NetworkInterfaceIds": [],
+            "DnsEntries": [],
+            "CreationTimestamp": "2018-09-07T00:42:40Z"
+        }
+    }
+    ```
 
 Now you should be good to go, with no other configurations required. Our AWS Lambda functions in our private VPC should now be communicating through AWS network pipes, without going through the interwebs, securely and privately, with DynamoDB.
 
@@ -434,12 +479,12 @@ docker image pull amazon/dynamodb-local
 docker container run -p 8000:8000 -d amazon/dynamodb-local
 ```
 
-### Route53 and Custom Domains
+## Route53 and Custom Domains
 
 Before you get going to far here, you need to make sure the following criteria are met:
 
 - An AWS certificate for all domains being used in custom domain must be created for the domains in use.
-- The AWS certificate must be in the `us-east-1` region currently to be picked up by the `serverless-domain-manager` plugin.
+- The AWS certificate must be in the `us-west-2` region currently to be picked up by the `serverless-domain-manager` plugin.
 - The AWS certificate must have the correct domains attached that will be used for the API Gateway.
 - In general, if you have a certificate with the `mydomain.com` and `*.mydomain.com` domains then you should be good to proceed with the below.
 
@@ -456,25 +501,19 @@ We use that variable system to infer the domain name based on the stage. We have
 Once this is set up, create a custom domain for each of your stages. This is a one-time setup step and is run with:
 
 ```
-$ sls create_domain --stage prod
-$ sls create_domain --stage test
-$ sls create_domain --stage dev
+$ sls create_domain --stage dev --profile stoic
+$ sls create_domain --stage test --profile stoic
+$ sls create_domain --stage prod --profile stoic
 ```
 
-Once the domains are set up, you can deploy to the proper stages. Use `sls deploy --stage prod` to deploy to `athena.stoicapis.com` and the other stages to deploy to their respective domains.
+Once the domains are set up, you can deploy to the proper stages. Use `sls deploy --stage prod` to deploy to `athena.stoicapis.com` and the other stages to deploy to their respective domains. Adjust the settings in this service for your own configuration, including the domain you'll use.
 
 Other considerations:
 
-- 
 - For specifics, reference this walkthrough: https://serverless.com/blog/serverless-api-gateway-domain/
 - To ensure that domains are created for each of the `stage` custom domains, create a custom domain for each `stage` with the instructions near the end of this walkthrough: https://serverless.com/blog/api-gateway-multiple-services/
 
 
 ### Still To Do
 
-- Figure out why handler unit tests are going to remove DynamoDB table
-- Update Readme.md with quickstart steps
-- Update Readme.md with correct deploy CF outputs and paths
-- Document API with meaningful Swagger-specific docs
 - Make repo public
-- Call out dependencies and assumptions (like what is already installed and not part of this tutorial: Docker, python, pipenv)
