@@ -5,7 +5,7 @@ layout: Doc
 -->
 # Serverless Microservice via REST API
 
-This example demonstrates how to setup a [RESTful Web Service](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) wrapper around a Note-taking microserivce, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is just an example and of course you could use any data storage as a backend in true microservice fashion.
+This example demonstrates how to setup a [RESTful Web API](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) interface to expose a Note-taking microserivce, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is just an example and, of course, you could use any data model or data store as a backend in true microservice fashion.
 
 ## Getting Dependencies
 
@@ -52,10 +52,10 @@ It's built with some love using the following stack and tooling:
 
 ## Use-Cases
 
-- API for a Web apps
-- API for a Mobile apps
+- API for a Web app
+- API for a Mobile app
 - API for IoT apps
-- API for system-to-system interfaces
+- API for system-to-system interactions
 
 ## Setup Serverless
 
@@ -69,10 +69,80 @@ Verify that a current version is installed.
 serverless --version
 ```
 
-## Quickstart
+## TLDR; (aka Quickstart)
 
-Get going here
+If you've already installed the pre-requisites already listed, including the Serverless framework, then you're ready to clone this repository.
 
+```bash
+git clone ssh://git@altssh.bitbucket.org:443/m3kan1cal/stoic-serverless-awsapi.git
+```
+
+Install `npm` packages and dependencies.
+
+```bash
+npm i
+```
+
+Create a virtual environment and install Python dependencies.
+
+```bash
+cd ~/stoic-serverless-awsapi
+pipenv install
+```
+
+Activate your virtual environment.
+
+```bash
+pipenv shell
+```
+
+Get the DynamoDB Local Docker image and start a container following the steps here: [DynamoDB Local](#dynamodb-local)
+
+Now, check your tests configuration file at `/tests/config.yml` and make sure all values are set to your preference.
+
+```bash
+vim ./tests/config.yml
+```
+
+Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+
+```bash
+vim ./tests/rest/__init__.py
+```
+
+Run the unit tests to verify they are passing.
+
+```bash
+pytest tests/unit
+```
+
+If the unit tests are passing, you're almost ready to start deploying. First, make sure you're set with Route53, a custom domain, and DNS by following the instructions here: [Route53 and Custom Domains](#route53-and-custom-domains)
+
+Next, get your DynamoDB VPC Endpoint created using the steps here: [DynamoDB and VPC Endpoints](#dynamodb-and-vpc-endpoints). We favor a VPC endpoint because our data is important; we care about privacy and security.
+
+We're now just about ready to deploy using the Serverless framework to our AWS provider. It's time to double check the values in the `serverless.yml` file in our project. Open up the file and sweep through to make sure the AWS region and other settings are valid. Pay particular attention to the service name, tags, VPC groups, subnets, region, resource names, custom domains, stages, and anything else you may want to customize.
+
+```bash
+vim ./serverless.yml
+```
+
+Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
+
+```bash
+sls deploy -v --aws-profile stoic --stage dev
+```
+
+At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
+
+```bash
+pytest tests/rest
+```
+
+If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
+
+From here, you can choose your own adventure: 1) maybe customize the data model or data store, 2) explore what it would take to add a Lambda authorizer to secure our endpoints, 3) start exploring Lambda event triggers to build a state machine, or 4) create another business-capable service that can work with our note-taking service to round out a more complete app.
+
+This is the end of the [TLDR;](#tldr-aka-quickstart;) walkthrough. It's all details from here on out.
 
 ## Deploying to AWS
 
@@ -291,23 +361,47 @@ Distribution Domain Name
   dx7gtrgmdf73e.cloudfront.net
 ```
 
-## Removing Deployment from AWS
+## Cleaning Up After Ourselves
 
 Add the delete commands here
 
-## Testing
+Manually delete DynammoDB and VPC Endpoint
 
-Talk about Unit Testing here
+Manually delete the Route53 and certs
 
-Talk about Integration Testing here
+## Unit, Integration & Automated API Testing
 
-Talk about considerations for testing like modifying settings and DynamoDB resource definitions
+Get the DynamoDB Local Docker image and start a container following the steps here: [DynamoDB Local](#dynamodb-local). Now, check your tests configuration file at `/tests/config.yml` and make sure all values are set to your preference.
 
-Local testing of Lambda functions is a good practice. When testig locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/
+```bash
+vim ./tests/config.yml
+```
+
+Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+
+```bash
+vim ./tests/rest/__init__.py
+```
+
+Run the unit tests to verify they are passing.
+
+```bash
+pytest tests/unit
+```
+
+If you've already deployed the AWS resources, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
+
+```bash
+pytest tests/rest
+```
+
+If all our tests are passing now, then we have a working microservice with an interface via API Gateway.
+
+Local testing of Lambda functions is a good practice. When testig locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/. This method is fantastic for debugging; if you're getting environment variable exceptions, be sure to check the `serverless.yml` for which vars you need to have set.
 
 ## Usage of Microservice / API
 
-You can create, retrieve, update, or delete `notes` with the following commands.
+You can create, read, update, delete or search `notes` with the following commands.
 
 ### Create a Note
 
@@ -390,65 +484,63 @@ We are deploying our microservice to a private VPC managed by our team. This mea
 
 A few things need to be in place for our Lambda functions, in our private VPC, to talk with the DynamoDB service. The steps below are a quickstart approach, but more details can be found here: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/vpc-endpoints-dynamodb.html#vpc-endpoints-dynamodb-tutorial.create-endpoint
 
-1. Make sure you have a main routing table in your AWS VPC that allows the proper network traffic.
+Make sure you have a main routing table in your AWS VPC that allows the proper network traffic. Using AWS CLI, verify that DynamoDB is an available service for creating VPC endpoints in the current AWS region.
 
-2. Using AWS CLI, verify that DynamoDB is an available service for creating VPC endpoints in the current AWS region.
+```bash
+aws ec2 describe-vpc-endpoint-services
 
-    ```bash
-    aws ec2 describe-vpc-endpoint-services
-    
-    {
-        "ServiceNames": [
-            "com.amazonaws.us-west-2.s3",
-            "com.amazonaws.us-west-2.dynamodb"
-        ]
-    }
-    ```
+{
+    "ServiceNames": [
+        "com.amazonaws.us-west-2.s3",
+        "com.amazonaws.us-west-2.dynamodb"
+    ]
+}
+```
 
-3. Determine your VPC identifier to build your VPC endpoint in.
+Determine your VPC identifier to build your VPC endpoint in.
 
-    ```bash
-    aws ec2 describe-vpcs
+```bash
+aws ec2 describe-vpcs
 
-    {
-        "Vpcs": [
-            {
-                "VpcId": "vpc-0bbc736e", 
-                "InstanceTenancy": "default", 
-                "State": "available", 
-                "DhcpOptionsId": "dopt-8454b7e1", 
-                "CidrBlock": "172.31.0.0/16", 
-                "IsDefault": true
-            }
-        ]
-    }
-    ```
-
-4. Create the DynamoDB VPC endpoint.
-
-    ```bash
-    aws ec2 create-vpc-endpoint --vpc-id YOUR_VPC_ID --service-name com.amazonaws.YOUR_AWS-REGION.dynamodb --route-table-ids YOUR_ROUTE_TABLE_IDS
-
-    {
-        "VpcEndpoint": {
-            "VpcEndpointId": "vpce-0f8c1f5da4a1afe69",
-            "VpcEndpointType": "Gateway",
-            "VpcId": "vpc-9bea4efd",
-            "ServiceName": "com.amazonaws.us-west-2.dynamodb",
-            "State": "available",
-            "PolicyDocument": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}",
-            "RouteTableIds": [
-                "rtb-0b644314ae3e5d2f1"
-            ],
-            "SubnetIds": [],
-            "Groups": [],
-            "PrivateDnsEnabled": false,
-            "NetworkInterfaceIds": [],
-            "DnsEntries": [],
-            "CreationTimestamp": "2018-09-07T00:42:40Z"
+{
+    "Vpcs": [
+        {
+            "VpcId": "vpc-0bbc736e", 
+            "InstanceTenancy": "default", 
+            "State": "available", 
+            "DhcpOptionsId": "dopt-8454b7e1", 
+            "CidrBlock": "172.31.0.0/16", 
+            "IsDefault": true
         }
+    ]
+}
+```
+
+Create the DynamoDB VPC endpoint.
+
+```bash
+aws ec2 create-vpc-endpoint --vpc-id YOUR_VPC_ID --service-name com.amazonaws.YOUR_AWS-REGION.dynamodb --route-table-ids YOUR_ROUTE_TABLE_IDS
+
+{
+    "VpcEndpoint": {
+        "VpcEndpointId": "vpce-0f8c1f5da4a1afe69",
+        "VpcEndpointType": "Gateway",
+        "VpcId": "vpc-9bea4efd",
+        "ServiceName": "com.amazonaws.us-west-2.dynamodb",
+        "State": "available",
+        "PolicyDocument": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}",
+        "RouteTableIds": [
+            "rtb-0b644314ae3e5d2f1"
+        ],
+        "SubnetIds": [],
+        "Groups": [],
+        "PrivateDnsEnabled": false,
+        "NetworkInterfaceIds": [],
+        "DnsEntries": [],
+        "CreationTimestamp": "2018-09-07T00:42:40Z"
     }
-    ```
+}
+```
 
 Now you should be good to go, with no other configurations required. Our AWS Lambda functions in our private VPC should now be communicating through AWS network pipes, without going through the interwebs, securely and privately, with DynamoDB.
 
@@ -484,9 +576,9 @@ docker container run -p 8000:8000 -d amazon/dynamodb-local
 Before you get going to far here, you need to make sure the following criteria are met:
 
 - An AWS certificate for all domains being used in custom domain must be created for the domains in use.
-- The AWS certificate must be in the `us-west-2` region currently to be picked up by the `serverless-domain-manager` plugin.
+- The AWS certificate **MUST** be in the `us-east-1` region currently to be picked up by the `serverless-domain-manager` plugin.
 - The AWS certificate must have the correct domains attached that will be used for the API Gateway.
-- In general, if you have a certificate with the `mydomain.com` and `*.mydomain.com` domains then you should be good to proceed with the below.
+- In general, if you have a certificate with the `mydomain.com` and `*.mydomain.com` domains attached to it then you should be good to proceed with the below.
 
 Pay particular attention to this line in the `serverless.yml` file:
 
@@ -512,8 +604,3 @@ Other considerations:
 
 - For specifics, reference this walkthrough: https://serverless.com/blog/serverless-api-gateway-domain/
 - To ensure that domains are created for each of the `stage` custom domains, create a custom domain for each `stage` with the instructions near the end of this walkthrough: https://serverless.com/blog/api-gateway-multiple-services/
-
-
-### Still To Do
-
-- Make repo public

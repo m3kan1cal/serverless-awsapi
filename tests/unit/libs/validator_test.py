@@ -67,6 +67,19 @@ def test_raises_exception_when_required_properties_not_found(monkeypatch, http_e
         assert "required properties" in str(exc.value)
 
 
+def test_remote_host_returned_when_env_var_dynamodb_host_found(monkeypatch, config):
+    monkeypatch.setenv("DYNAMODB_HOST", "some remote host")
+    host = val.check_dynamodb_host()
+
+    assert host != config["aws"]["dynamodb"]["localHost"]
+
+
+def test_local_host_returned_when_env_var_dynamodb_host_not_found(monkeypatch, config):
+    host = val.check_dynamodb_host()
+
+    assert host == config["aws"]["dynamodb"]["localHost"]
+
+
 def test_now_timestamp_returns_true_when_current():
     now = int(time.time() * 1000) # +/- 5 seconds of now.
     

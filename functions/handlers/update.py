@@ -12,7 +12,7 @@ def update(event, context):
     """Update item in the collection."""
 
     try:
-        
+
         # Determine if required env var for region is present.
         val.check_region()
 
@@ -21,7 +21,7 @@ def update(event, context):
 
         # Check for the url {id}.
         note_id = val.check_id(event)
-        
+
         # Determine if required property body is present.
         val.check_body(event)
 
@@ -35,7 +35,10 @@ def update(event, context):
         # *aaS provider resources away from biz logic.
         region = os.environ["AWS_DEFAULT_REGION"]
         table = os.environ["DYNAMODB_TABLE"]
-        conn = boto3.resource("dynamodb", region)
+
+        # Determine which DynamoDB host we need (local/remote)?
+        host = val.check_dynamodb_host()
+        conn = boto3.resource("dynamodb", region, endpoint_url=host)
         conn_table = conn.Table(table)
 
         # Build our model and update.
@@ -43,7 +46,7 @@ def update(event, context):
         item = note.update(note_id, data)
 
         return respond(200, item)
-    
+
     except ex.AwsRegionNotSetException as exc:
         return respond(500, {"error": str(exc)})
 
@@ -55,7 +58,7 @@ def update(event, context):
 
     except ex.RequestBodyNotSetException as exc:
         return respond(400, {"error": str(exc)})
-        
+
     except ex.RequestBodyNotJsonException as exc:
         return respond(400, {"error": str(exc)})
 

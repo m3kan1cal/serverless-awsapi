@@ -5,6 +5,29 @@ service: notes
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
+plugins:
+  - serverless-python-requirements
+  - serverless-domain-manager
+
+custom:
+  pythonRequirements:
+    dockerizePip: true # For compiling 64-bit libraries
+  stage: ${opt:stage, self:provider.stage}
+  domains:
+    base: stoicapis.com
+    prod: athena.${self:custom.domains.base}
+    test: athena-test.${self:custom.domains.base}
+    dev: athena-dev.${self:custom.domains.base}
+
+  # Domain manager plugin settings:
+  # https://github.com/amplify-education/serverless-domain-manager#known-issues
+  customDomain:
+    basePath: api
+    domainName: ${self:custom.domains.${self:custom.stage}}
+    stage: ${self:custom.stage}
+    createRoute53Record: true
+    certificateName: "*.${self:custom.domains.base}"
+
 provider:
   name: aws
   runtime: python3.6
@@ -33,6 +56,7 @@ provider:
 
   environment:
     DYNAMODB_TABLE: stoic-${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_HOST: https://dynamodb.${self:provider.region}.amazonaws.com
     DYNAMODB_GSI_USERID_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-userid-noteid-index
     DYNAMODB_GSI_NOTEBOOK_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-notebook-noteid-index
 
@@ -138,7 +162,7 @@ functions:
 # (Round up to the nearest 1 KB multiplier)
 resources:
   Resources:
-    notesDynamoDbTable:
+    DynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
@@ -187,26 +211,3 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
-
-plugins:
-  - serverless-python-requirements
-  - serverless-domain-manager
-
-custom:
-  pythonRequirements:
-    dockerizePip: true # For compiling 64-bit libraries
-  stage: ${opt:stage, self:provider.stage}
-  domains:
-    base: stoicapis.com
-    prod: athena.${self:custom.domains.base}
-    test: athena-test.${self:custom.domains.base}
-    dev: athena-dev.${self:custom.domains.base}
-
-  # Domain manager plugin settings:
-  # https://github.com/amplify-education/serverless-domain-manager#known-issues
-  customDomain:
-    basePath: api
-    domainName: ${self:custom.domains.${self:custom.stage}}
-    stage: ${self:custom.stage}
-    createRoute53Record: true
-    certificateName: "*.${self:custom.domains.base}"

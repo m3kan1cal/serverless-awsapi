@@ -26,7 +26,10 @@ def delete(event, context):
         # *aaS provider resources away from biz logic.
         region = os.environ["AWS_DEFAULT_REGION"]
         table = os.environ["DYNAMODB_TABLE"]
-        conn = boto3.resource("dynamodb", region)
+        
+        # Determine which DynamoDB host we need (local/remote)?
+        host = val.check_dynamodb_host()
+        conn = boto3.resource("dynamodb", region, endpoint_url=host)
         conn_table = conn.Table(table)
 
         # Build our model and delete.

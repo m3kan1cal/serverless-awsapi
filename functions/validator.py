@@ -83,11 +83,20 @@ def check_props(data):
             "Validation failed: required properties (userId, notebook, text) not present in request body.")
 
 
+def check_dynamodb_host():
+    """Determine the right DynamoDB host to use, local or remote."""
+
+    if 'DYNAMODB_HOST' not in os.environ:
+        return 'http://localhost:8000'
+    else:
+        return os.environ["DYNAMODB_HOST"]
+
+
 def is_now(timestamp):
-    """Determine if timestamp is +/- 5 seconds of now."""
+    """Determine if timestamp is +/- 10 seconds of now."""
 
     now = int(time.time() * 1000)
-    return (now - 5000) <= timestamp <= (now + 5000)
+    return (now - 10000) <= timestamp <= (now + 10000)
 
 
 def is_timestamp(timestamp):
