@@ -1,11 +1,24 @@
 <!--
-title: AWS Serverless REST API with DynamoDB store in Python
-description: This example demonstrates how to setup a RESTful Web Service allowing you to create, list, get, update and delete Notes. DynamoDB is used to store the data.
+title: Serverless Microservice via REST API with DynamoDB Store in Python
+description: This project demonstrates how to setup a **Microservice & RESTful API** for a Note-taking app, using the Serverless framework and AWS, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is only an example; you could use any data model or data store as a backend in true microservice fashion.
 layout: Doc
 -->
-# Serverless Microservice via REST API
+# Serverless Microservice via REST API with DynamoDB Store in Python
 
-This example demonstrates how to setup a [RESTful Web API](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) interface to expose a Note-taking microserivce, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is just an example and, of course, you could use any data model or data store as a backend in true microservice fashion.
+This project demonstrates how to setup a **Microservice & RESTful API** for a Note-taking app, using the Serverless framework and AWS, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is only an example; you could use any data model or data store as a backend in true microservice fashion.
+
+After all is said and done, we'll end up with a microservice and API (contrary to some beliefs, they are not the same thing!). The end result is a self-contained, web-accessible microservice that is small, testable, customizable, scalable, resilient, monitor-able, clone-able, stateless, and fairly simple.
+
+It can be served up as multiple Lambda functions unified under a common domain (multiple microservices behind one API proxy domain so consumers only need to remember one domain, regardless of how many functions and API Gateway endpoints exist). And we try to stick with the pattern of one service, one model, and one API.
+
+It's built with some love using the following stack and tooling:
+
+- AWS (Lambda, API Gateway, CloudFormation, CloudFront, CloudWatch, DynamoDB, IAM, Route53, Certificate Manager, VPC Endpoints)
+- [Serverless framework](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
+- [Docker](https://www.docker.com/get-started)
+- [Pipenv](https://pipenv.readthedocs.io/)
+- [Python 3.6](https://www.python.org/downloads/)
+- [Visual Studio Code](https://code.visualstudio.com/download)
 
 ## Getting Dependencies
 
@@ -34,21 +47,6 @@ Serverless relies on Node.js and npm for package management. Make sure to have N
 This service has a separate directory for all the Note service operations, the functions. For each operation exactly one file exists e.g. `functions/delete.py`. In each of these files there is exactly one function defined, the handler.
 
 The idea behind the `functions` directory is that in case you want to create a service containing multiple resources e.g. users, notes, comments you could do so in the same service. While this is certainly possible you might consider creating a separate service for each resource. It depends on the use-case and your preference.
-
-## End Result Microservice
-
-The end result is a self-contained, web-accessible microservice that is small, testable, customizable, scalable, resilient, monitor-able, clone-able, stateless, and fairly simple.
-
-It can be served up as multiple Lambda functions unified under a common domain (multiple APIs but one API proxy domain so consumers only need to remember one domain, regardless of how many functions and API Gateway endpoints exist). And we try to stick with the pattern of one service, one model, one service.
-
-It's built with some love using the following stack and tooling: 
-
-- AWS (Lambda, API Gateway, CloudFormation, CloudFront, CloudWatch, DynamoDB, IAM, Route53, Certificate Manager, VPC Endpoints)
-- [Serverless framework](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
-- [Docker](https://www.docker.com/get-started)
-- [Pipenv](https://pipenv.readthedocs.io/)
-- [Python 3.6](https://www.python.org/downloads/)
-- [Visual Studio Code](https://code.visualstudio.com/download)
 
 ## Use-Cases
 
@@ -140,13 +138,13 @@ pytest tests/rest
 
 If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
 
-From here, you can choose your own adventure: 1) maybe customize the data model or data store, 2) explore what it would take to add a Lambda authorizer to secure our endpoints, 3) start exploring Lambda event triggers to build a state machine, or 4) create another business-capable service that can work with our note-taking service to round out a more complete app.
+From here, you can choose your own adventure: 1) play around with the API with `curl` or Postman, 2) maybe customize the data model or data store, 3) explore what it would take to add a Lambda authorizer to secure our endpoints, 4) start exploring Lambda event triggers to build a state machine, or 5) create another business-capable service that can work with our note-taking service to round out a more complete app.
 
 This is the end of the [TLDR;](#tldr-aka-quickstart;) walkthrough. It's all details from here on out.
 
 ## Deploying to AWS
 
-In order to deploy the endpoint, creating a CloudFormation stack in the process, simply run:
+In order to deploy the endpoint, creating a CloudFormation stack in the process, simply run the below commands, where YOUR_PROFILE is the profile to use in your AWS CLI configured credentials file and YOUR_STAGE is the stage in API Gateway that you're deploying to.
 
 ```bash
 sls deploy -v --aws-profile YOUR_PROFILE --stage YOUR_STAGE
@@ -363,11 +361,15 @@ Distribution Domain Name
 
 ## Cleaning Up After Ourselves
 
-Add the delete commands here
+When we're done with this project, or if we need to make changes to resources that can't be handled by simply updating the `serverless.yml` file (via CloudFormation and Serverless framework), we may find that we need to remove the stack that we've created and then redeploy. Follow these steps to clean up, where YOUR_PROFILE is the profile to use in your AWS CLI configured credentials file and YOUR_STAGE is the stage in API Gateway that you're deploying to.
 
-Manually delete DynammoDB and VPC Endpoint
+```bash
+sls remove -v --aws-profile YOUR_PROFILE --stage YOUR_STAGE
+```
 
-Manually delete the Route53 and certs
+After our stack is removed, along with the resources it created, we're going to have to manually remove the DynamoDB table it spun up. Do that now.
+
+Once DynamoDB is removed, if we're aiming to completely remove any artifacts attached to this project, we're also going to need to remove the Route53 hosted zones, TLS certificates in `us-east-1`, and the VPC Endpoints that were configured outside of the scope of the CloudFormation stack.
 
 ## Unit, Integration & Automated API Testing
 
@@ -397,11 +399,17 @@ pytest tests/rest
 
 If all our tests are passing now, then we have a working microservice with an interface via API Gateway.
 
-Local testing of Lambda functions is a good practice. When testig locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/. This method is fantastic for debugging; if you're getting environment variable exceptions, be sure to check the `serverless.yml` for which vars you need to have set.
+## Serverless "Invoke" Testing
+
+Local and remote testing of Lambda functions is a good practice, especially when developing, using the Serverless framework. 
+
+When testing locally there are some considerations to keep in mind. Find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/. This method is fantastic for debugging; if you're getting environment variable exceptions, be sure to check the `serverless.yml` for which vars you need to have set.
+
+When testing remotely, find the details here: https://serverless.com/framework/docs/providers/aws/cli-reference/invoke/
 
 ## Usage of Microservice / API
 
-You can create, read, update, delete or search `notes` with the following commands.
+We can create, read, update, delete or search `notes` with the following commands.
 
 ### Create a Note
 
@@ -409,12 +417,27 @@ With API:
 
 ```bash
 curl -X POST https://athena-dev.stoicapis.com/api/notes --data '{ "userId": "m3kan1cal", "notebook": "standard", "text": "Learn Serverless" }'
+
+---response---
+
+{"noteId": "UnpyiOkHQdChUghQX35uzA", "userId": "m3kan1cal", "notebook": "standard", "text": "Learn Serverless", "createdAt": 1536850636242, "updatedAt": 1536850636242}
 ```
 
 With `sls` local:
 
 ```bash
-sls invoke local -f create --data '{"body": "{ \"text\": \"Do a test, fool!\" }"}'
+sls invoke local -f create --data '{"body": "{\"userId\": \"m3kan1cal\", \"notebook\": \"standard\", \"text\": \"Do a test, fool!\"}"}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 201,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "{\"noteId\": \"Q7wCwFCXQPmzKPScaEFKDw\", \"userId\": \"m3kan1cal\", \"notebook\": \"standard\", \"text\": \"Do a test, fool!\", \"createdAt\": 1536850788457, \"updatedAt\": 1536850788457}"
+}
 ```
 
 ### Read a Note
@@ -423,52 +446,139 @@ With API:
 
 ```bash
 # Replace the <id> part with a real id from your notes table
-curl https://athena-dev.stoicapis.com/api/notes/<id>
+curl -X GET https://athena-dev.stoicapis.com/api/notes/Q7wCwFCXQPmzKPScaEFKDw
 
-{"text":"Learn Serverless","userId":"ee6490d0-aa81-11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":false,"updatedAt":1479138570824}%
+---response---
+
+{"createdAt": 1536850788457, "text": "Do a test, fool!", "noteId": "Q7wCwFCXQPmzKPScaEFKDw", "notebook": "standard", "userId": "m3kan1cal", "updatedAt": 1536850788457}
 ```
 
 With `sls` local:
+
+```bash
+sls invoke local -f read --data '{"pathParameters": {"id": "Q7wCwFCXQPmzKPScaEFKDw"}}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "{\"createdAt\": 1536850788457, \"text\": \"Do a test, fool!\", \"noteId\": \"Q7wCwFCXQPmzKPScaEFKDw\", \"notebook\": \"standard\", \"userId\": \"m3kan1cal\", \"updatedAt\": 1536850788457}"
+}
+```
 
 ### Update a Note
 
 ```bash
 # Replace the <id> part with a real id from your notes table
-curl -X PUT https://athena-dev.stoicapis.com/api/notes/<id> --data '{ "text": "Learn Serverless", "checked": true }'
+curl -X PUT https://athena-dev.stoicapis.com/api/notes/Q7wCwFCXQPmzKPScaEFKDw --data '{ "userId": "m3kan1cal", "notebook": "standard", "text": "Learn Serverless updated just now!" }'
 
-{"text":"Learn Serverless","userId":"ee6490d0-aa81-11e6-9ede-afdfa051af86","createdAt":1479138570824,"checked":true,"updatedAt":1479138570824}%
+---response---
+
+{"createdAt": 1536850788457, "text": "Learn Serverless updated just now!", "noteId": "Q7wCwFCXQPmzKPScaEFKDw", "notebook": "standard", "updatedAt": 1536853504858, "userId": "m3kan1cal"}
 ```
 
 With `sls` local:
+
+```bash
+sls invoke local -f update --data '{"pathParameters": {"id": "Q7wCwFCXQPmzKPScaEFKDw"}, "body": "{\"userId\": \"m3kan1cal\", \"notebook\": \"standard\", \"text\": \"Do a test, fool! Updated!\"}"}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "{\"createdAt\": 1536850788457, \"text\": \"Do a test, fool! Updated!\", \"noteId\": \"Q7wCwFCXQPmzKPScaEFKDw\", \"notebook\": \"standard\", \"updatedAt\": 1536853630517, \"userId\": \"m3kan1cal\"}"
+}
+```
 
 ### Delete a Note
 
 ```bash
 # Replace the <id> part with a real id from your notes table
-curl -X DELETE https://athena-dev.stoicapis.com/api/notes/<id>
+curl -X DELETE https://athena-dev.stoicapis.com/api/notes/Q7wCwFCXQPmzKPScaEFKDw
+
+---response---
+
+{}
 ```
 
 With `sls` local:
+
+```bash
+sls invoke local -f delete --data '{"pathParameters": {"id": "Q7wCwFCXQPmzKPScaEFKDw"}}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "{}"
+}
+```
 
 ### Search all Notes from User
 
 ```bash
-curl https://athena-dev.stoicapis.com/api/notes
+curl -X GET https://athena-dev.stoicapis.com/api/users/azrael/notes
 
-[{"text":"Deploy my first service","userId":"ac90fe80-aa83-11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","userId":"20679390-aa85-11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
+---response---
+
+[{"text": "Learn Serverless", "noteId": "CApwr0rITSyrb6OSLdzWhQ", "notebook": "standard", "userId": "m3kan1cal"}, {"text": "Learn Serverless", "noteId": "UnpyiOkHQdChUghQX35uzA", "notebook": "standard", "userId": "m3kan1cal"}]
 ```
 
 With `sls` local:
+
+```bash
+sls invoke local -f searchByUser --data '{"pathParameters": {"id": "m3kan1cal"}}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "[{\"text\": \"Learn Serverless\", \"noteId\": \"CApwr0rITSyrb6OSLdzWhQ\", \"notebook\": \"standard\", \"userId\": \"m3kan1cal\"}, {\"text\": \"Learn Serverless\", \"noteId\": \"UnpyiOkHQdChUghQX35uzA\", \"notebook\": \"standard\", \"userId\": \"m3kan1cal\"}]"
+}
+```
 
 ### Search all Notes from Notebook
 
 ```bash
-curl https://athena-dev.stoicapis.com/api/notes
+curl -X GET https://athena-dev.stoicapis.com/api/notebooks/standard/notes
 
-[{"text":"Deploy my first service","userId":"ac90fe80-aa83-11e6-9ede-afdfa051af86","checked":true,"updatedAt":1479139961304},{"text":"Learn Serverless","userId":"20679390-aa85-11e6-9ede-afdfa051af86","createdAt":1479139943241,"checked":false,"updatedAt":1479139943241}]%
+---response---
+
+[{"text": "Learn Serverless", "noteId": "CApwr0rITSyrb6OSLdzWhQ", "notebook": "standard", "userId": "m3kan1cal"}, {"text": "Learn Serverless", "noteId": "UnpyiOkHQdChUghQX35uzA", "notebook": "standard", "userId": "m3kan1cal"}]
 ```
 
 With `sls` local:
+
+```bash
+sls invoke local -f searchByNotebook --data '{"pathParameters": {"id": "standard"}}'
+
+---response---
+
+{
+    "isBase64Encoded": false,
+    "statusCode": 200,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "[{\"text\": \"Learn Serverless\", \"noteId\": \"CApwr0rITSyrb6OSLdzWhQ\", \"notebook\": \"standard\", \"userId\": \"m3kan1cal\"}, {\"text\": \"Learn Serverless\", \"noteId\": \"UnpyiOkHQdChUghQX35uzA\", \"notebook\": \"standard\", \"userId\": \"m3kan1cal\"}]"
+}
+```
 
 ## Scaling
 
