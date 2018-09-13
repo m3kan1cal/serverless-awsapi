@@ -66,48 +66,48 @@ serverless --version
 
 1. If you've already installed the pre-requisites already listed, including the Serverless framework, then you're ready to clone this repository.
 
-```bash
-git clone ssh://git@altssh.bitbucket.org:443/m3kan1cal/stoic-serverless-awsapi.git
-```
+    ```bash
+    git clone ssh://git@altssh.bitbucket.org:443/m3kan1cal/stoic-serverless-awsapi.git
+    ```
 
 2. Install `npm` packages and dependencies.
 
-```bash
-npm i
-```
+    ```bash
+    npm i
+    ```
 
 3. Create a virtual environment and install Python dependencies.
 
-```bash
-cd ~/stoic-serverless-awsapi
-pipenv install
-```
+    ```bash
+    cd ~/stoic-serverless-awsapi
+    pipenv install
+    ```
 
 4. Activate your virtual environment.
 
-```bash
-pipenv shell
-```
+    ```bash
+    pipenv shell
+    ```
 
 5. Get the DynamoDB Local Docker image and start a container following the steps here: [DynamoDB Local](#dynamodb-local)
 
 6. Now, check your tests configuration file at `/tests/config.yml` and make sure all values are set to your preference.
 
-```bash
-vim ./tests/config.yml
-```
+    ```bash
+    vim ./tests/config.yml
+    ```
 
 7. Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
 
-```bash
-vim ./tests/rest/__init__.py
-```
+    ```bash
+    vim ./tests/rest/__init__.py
+    ```
 
 8. Run the unit tests to verify they are passing.
 
-```bash
-pytest tests/unit
-```
+    ```bash
+    pytest tests/unit
+    ```
 
 9. If the unit tests are passing, you're almost ready to start deploying. First, make sure you're set with Route53, a custom domain, and DNS by following the instructions here: [Route53 and Custom Domains](#route53-and-custom-domains)
 
@@ -115,21 +115,21 @@ pytest tests/unit
 
 11. We're now just about ready to deploy using the Serverless framework to our AWS provider. It's time to double check the values in the `serverless.yml` file in our project. Open up the file and sweep through to make sure the AWS region and other settings are valid. Pay particular attention to the service name, tags, VPC groups, subnets, region, resource names, custom domains, stages, and anything else you may want to customize.
 
-```bash
-vim ./serverless.yml
-```
+    ```bash
+    vim ./serverless.yml
+    ```
 
 12. Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
 
-```bash
-sls deploy -v --aws-profile stoic --stage dev
-```
+    ```bash
+    sls deploy -v --aws-profile stoic --stage dev
+    ```
 
 13. At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
-```bash
-pytest tests/rest
-```
+    ```bash
+    pytest tests/rest
+    ```
 
 14. If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
 
