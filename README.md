@@ -18,24 +18,26 @@ It's built with some love using the following stack and tooling:
 ## Getting Dependencies
 
 ### Docker
-You only need the community version, but you can pick which you want: https://www.docker.com/get-started 
-
-This is to be able to run DynamoDB Local for development and testing purposes.
+You only need the community version, but you can pick which you want: https://www.docker.com/get-started. This is to be able to run DynamoDB Local for development and testing purposes.
 
 ### Python 3 and Pipenv
-This microservice is built on a Python-based stack. Make sure you have an interpreter installed somewhere you can reference. Get one here: https://www.python.org/downloads/ 
+This microservice is built on a Python-based stack. Make sure you have an interpreter installed somewhere you can reference. Get one here: https://www.python.org/downloads/. Also, get Pipenv for a seamless `pip` and `virtualenv` experience. Get it here: https://pipenv.readthedocs.io/.
 
-Also, get Pipenv for a seamless `pip` and `virtualenv` experience. Get it here: https://pipenv.readthedocs.io/
+Note: if you want to follow the [Docker TLDR: (aka Quickstart)](#docker-tldr-aka-quickstart) then this step is not needed.
 
 ### Node.js and npm
-We're using the Serverless framework with and AWS provider specified. It's built on Node.js, so we'll need it for some CLI commands. Get it here: https://nodejs.org/en/download/
+We're using the Serverless framework with and AWS provider specified. It's built on Node.js, so we'll need it for some CLI commands. Get it here: https://nodejs.org/en/download/.
 
-### AWS Account and Credentials
-This an AWS Lambda, API Gateway microservice. Makes sure you have an account and you've configured your `~/.aws.credentials` with an access ID and secret. For simplicity, give the IAM user admin access, but fine-tune for production deployments.
+Note: if you want to follow the [Docker TLDR: (aka Quickstart)](#docker-tldr-aka-quickstart) then this step is not needed.
 
 ### Plugins Installed and Configured
 
 Serverless relies on Node.js and npm for package management. Make sure to have Node.js and npm installed and configured for us. To ensure all Node.js packages are installed run `npm install`.
+
+Note: if you want to follow the [Docker TLDR: (aka Quickstart)](#docker-tldr-aka-quickstart) then this step is not needed.
+
+### AWS Account and Credentials
+This an AWS Lambda, API Gateway microservice. Makes sure you have an account and you've configured your `~/.aws.credentials` with an access ID and secret. For simplicity, give the IAM user admin access, but fine-tune for production deployments.
 
 ## Project Structure
 
@@ -50,88 +52,108 @@ The idea behind the `functions` directory is that in case you want to create a s
 - API for IoT apps
 - API for system-to-system interactions
 
-## Setup Serverless
+## Docker TLDR: (aka Quickstart)
 
-```bash
-npm install -g serverless
-```
+If you're a fan of using Docker for spinning up quick development environments, and you alredy have it installed, then there is a shorter path to being able to try out this project.
 
-Verify that a current version is installed.
+1. Build the Docker image based on the Dockerfile contained in this project.
 
-```bash
-serverless --version
-```
+    ```bash
+    docker image build -t stoictechgroup/stoic-serverless-awsapi .
+    ```
 
-## TLDR; (aka Quickstart)
+2. Make sure the `docker-run.sh` file is executable, then run the following command where the parameter passed at the end is the command you want your container to run, including any `serverless` or `sls` commands.
 
-1. If you've already installed the pre-requisites already listed, including the Serverless framework, then you're ready to clone this repository.
+    ```bash
+    ./docker-run.sh "sls --version"
+    ```
+
+3. Now jump down to [Normal TLDR; (aka Quickstart)](#normal-tldr-aka-quickstart) step 6, and go from there, injecting any command called out in to your Serverless-ready Docker container prompt.
+
+4. Note that when calling `pytest` you may want to use `pipenv run pytest` instead, since you don't really need to create a virtual environment inside of your container. No need to go ["inception"](https://www.imdb.com/title/tt1375666/) on it.
+
+## Normal TLDR; (aka Quickstart)
+
+1. Time to install the Serverless framework.
+
+    ```bash
+    npm install -g serverless
+    ```
+
+    Verify that a current version is installed.
+
+    ```bash
+    serverless --version
+    ```
+
+2. If you've already installed the pre-requisites already listed, including the Serverless framework, then you're ready to clone this repository.
 
     ```bash
     git clone ssh://git@altssh.bitbucket.org:443/m3kan1cal/stoic-serverless-awsapi.git
     ```
 
-2. Install `npm` packages and dependencies.
+3. Install `npm` packages and dependencies.
 
     ```bash
     npm i
     ```
 
-3. Create a virtual environment and install Python dependencies.
+4. Create a virtual environment and install Python dependencies.
 
     ```bash
     cd ~/stoic-serverless-awsapi
     pipenv install
     ```
 
-4. Activate your virtual environment.
+5. Activate your virtual environment.
 
     ```bash
     pipenv shell
     ```
 
-5. Get the DynamoDB Local Docker image and start a container following the steps here: [DynamoDB Local](#dynamodb-local)
+6. Get the DynamoDB Local Docker image and start a container following the steps here: [DynamoDB Local](#dynamodb-local)
 
-6. Now, check your tests configuration file at `/tests/config.yml` and make sure all values are set to your preference.
+7. Now, check your tests configuration file at `/tests/config.yml` and make sure all values are set to your preference.
 
     ```bash
     vim ./tests/config.yml
     ```
 
-7. Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+8. Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
 
     ```bash
     vim ./tests/rest/__init__.py
     ```
 
-8. Run the unit tests to verify they are passing.
+9. Run the unit tests to verify they are passing.
 
     ```bash
     pytest tests/unit
     ```
 
-9. If the unit tests are passing, you're almost ready to start deploying. First, make sure you're set with Route53, a custom domain, and DNS by following the instructions here: [Route53 and Custom Domains](#route53-and-custom-domains)
+10. If the unit tests are passing, you're almost ready to start deploying. First, make sure you're set with Route53, a custom domain, and DNS by following the instructions here: [Route53 and Custom Domains](#route53-and-custom-domains)
 
-10. Next, get your DynamoDB VPC Endpoint created using the steps here: [DynamoDB and VPC Endpoints](#dynamodb-and-vpc-endpoints). We favor a VPC endpoint because our data is important; we care about privacy and security.
+11. Next, get your DynamoDB VPC Endpoint created using the steps here: [DynamoDB and VPC Endpoints](#dynamodb-and-vpc-endpoints). We favor a VPC endpoint because our data is important; we care about privacy and security.
 
-11. We're now just about ready to deploy using the Serverless framework to our AWS provider. It's time to double check the values in the `serverless.yml` file in our project. Open up the file and sweep through to make sure the AWS region and other settings are valid. Pay particular attention to the service name, tags, VPC groups, subnets, region, resource names, custom domains, stages, and anything else you may want to customize.
+12. We're now just about ready to deploy using the Serverless framework to our AWS provider. It's time to double check the values in the `serverless.yml` file in our project. Open up the file and sweep through to make sure the AWS region and other settings are valid. Pay particular attention to the service name, tags, VPC groups, subnets, region, resource names, custom domains, stages, and anything else you may want to customize.
 
     ```bash
     vim ./serverless.yml
     ```
 
-12. Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
+13. Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
 
     ```bash
     sls deploy -v --aws-profile stoic --stage dev
     ```
 
-13. At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
+14. At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
     ```bash
     pytest tests/rest
     ```
 
-14. If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
+15. If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
 
 From here, you can choose your own adventure: 1) play around with the API with `curl` or Postman, 2) maybe customize the data model or data store, 3) explore what it would take to add a Lambda authorizer to secure our endpoints, 4) start exploring Lambda event triggers to build a state machine, or 5) create another business-capable service that can work with our note-taking service to round out a more complete app.
 
