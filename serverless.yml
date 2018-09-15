@@ -10,6 +10,7 @@ plugins:
   - serverless-domain-manager
 
 custom:
+  parentService: stoic
   pythonRequirements:
     dockerizePip: true # For compiling 64-bit libraries
   stage: ${opt:stage, self:provider.stage}
@@ -43,22 +44,22 @@ provider:
       - subnet-a64eb9c0
       - subnet-dfbdb496
   
-  stackName: stoic-${self:service}-stack-${opt:stage, self:provider.stage}
-  apiName: stoic-${self:service}-api-${opt:stage, self:provider.stage}
+  stackName: ${self:custom.parentService}-${self:service}-stack-${opt:stage, self:provider.stage}
+  apiName: ${self:custom.parentService}-${self:service}-api-${opt:stage, self:provider.stage}
 
   stage: dev # Can be prod|test|dev
   region: us-west-2
   
   stackTags: # Optional CloudFormation stack tags
-    service: stoic-${self:service}
+    service: ${self:custom.parentService}-${self:service}
   tags: # Optional service tags
-    service: stoic-${self:service}
+    service: ${self:custom.parentService}-${self:service}
 
   environment:
-    DYNAMODB_TABLE: stoic-${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_TABLE: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}
     DYNAMODB_HOST: https://dynamodb.${self:provider.region}.amazonaws.com
-    DYNAMODB_GSI_USERID_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-userid-noteid-index
-    DYNAMODB_GSI_NOTEBOOK_NOTEID: stoic-${self:service}-${opt:stage, self:provider.stage}-notebook-noteid-index
+    DYNAMODB_GSI_USERID_NOTEID: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}-userid-noteid-index
+    DYNAMODB_GSI_NOTEBOOK_NOTEID: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}-notebook-noteid-index
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -85,69 +86,69 @@ package:
 functions:
   create:
     handler: functions/handlers/create.create
-    name: stoic-${self:service}-create-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-create-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: notes
           method: post
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
   read:
     handler: functions/handlers/read.read
-    name: stoic-${self:service}-read-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-read-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: notes/{id}
           method: get
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
   update:
     handler: functions/handlers/update.update
-    name: stoic-${self:service}-update-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-update-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: notes/{id}
           method: put
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
   delete:
     handler: functions/handlers/delete.delete
-    name: stoic-${self:service}-delete-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-delete-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: notes/{id}
           method: delete
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
   searchByUser:
     handler: functions/handlers/search.search_by_user
-    name: stoic-${self:service}-search-by-user-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-search-by-user-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: users/{id}/notes
           method: get
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
   searchByNotebook:
     handler: functions/handlers/search.search_by_notebook
-    name: stoic-${self:service}-search-by-notebook-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parentService}-${self:service}-search-by-notebook-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
           path: notebooks/{id}/notes
           method: get
           cors: true
     tags: # Optional function tags
-      service: stoic-${self:service}
+      service: ${self:custom.parentService}-${self:service}
 
 
 # Schema based on:
