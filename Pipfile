@@ -8,6 +8,7 @@ requests = "*"
 boto3 = "*"
 smalluuid = "*"
 pyjwt = "*"
+pyyaml = "*"
 
 [dev-packages]
 pylint = "*"
