@@ -1,7 +1,6 @@
 import os
 
 import pytest
-import mock
 import boto3
 import botocore
 import yaml

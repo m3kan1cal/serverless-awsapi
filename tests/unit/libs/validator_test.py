@@ -1,7 +1,6 @@
 import os
 import time
 
-import mock
 import pytest
 import yaml
 

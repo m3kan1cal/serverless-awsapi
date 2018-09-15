@@ -4,7 +4,6 @@ import time
 import json
 
 import pytest
-import mock
 
 from tests.rest import api_notes_url
 

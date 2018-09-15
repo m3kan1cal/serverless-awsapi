@@ -4,7 +4,6 @@ import json
 
 import yaml
 import pytest
-import mock
 import boto3
 
 from functions.handlers.create import create

@@ -1,6 +1,5 @@
 import boto3
 import pytest
-import mock
 from pytest_mock import mocker
 from moto import mock_dynamodb2
 

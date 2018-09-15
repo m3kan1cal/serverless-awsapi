@@ -3,7 +3,6 @@ import json
 
 import yaml
 import pytest
-import mock
 
 from functions.beacon import respond
 

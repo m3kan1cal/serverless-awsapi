@@ -1,7 +1,6 @@
 import os
 import time
 
-import mock
 import pytest
 from moto import mock_dynamodb2
 from pytest_mock import mocker

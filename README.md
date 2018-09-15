@@ -98,11 +98,11 @@ If you're a fan of using Docker for spinning up quick development environments, 
     npm i
     ```
 
-4. Create a virtual environment and install Python dependencies.
+4. Create a virtual environment and install Python dependencies, including `dev`.
 
     ```bash
     cd ~/stoic-serverless-awsapi
-    pipenv install
+    pipenv install --dev
     ```
 
 5. Activate your virtual environment.
