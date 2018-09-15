@@ -1,6 +1,6 @@
 [[source]]
 url = "https://pypi.org/simple"
-verify_ssl = true
+verify_ssl = false
 name = "pypi"
 
 [packages]
@@ -13,10 +13,8 @@ pyjwt = "*"
 pylint = "*"
 autopep8 = "*"
 rope = "*"
-pytest = "*"
-moto = "*"
 pytest-mock = "*"
-tavern = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.6"

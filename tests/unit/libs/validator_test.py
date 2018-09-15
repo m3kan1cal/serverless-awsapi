@@ -87,11 +87,11 @@ def test_now_timestamp_returns_true_when_current():
 
 
 def test_now_timestamp_returns_false_when_stale_or_future():
-    old = int(time.time() * 1000) - 6000 # Make 6 seconds old.
-    new = int(time.time() * 1000) + 6000 # Make 6 seconds future.
+    past = int(time.time() * 1000) - 20000 # Make 10 seconds old.
+    future = int(time.time() * 1000) + 20000 # Make 6 seconds future.
 
-    assert val.is_now(old) == False
-    assert val.is_now(new) == False
+    assert val.is_now(past) == False
+    assert val.is_now(future) == False
 
 
 def test_is_timestamp_returns_true_when_valid_timestamp():
