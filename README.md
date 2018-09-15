@@ -89,7 +89,7 @@ If you're a fan of using Docker for spinning up quick development environments, 
 2. If you've already installed the pre-requisites already listed, including the Serverless framework, then you're ready to clone this repository.
 
     ```bash
-    git clone ssh://git@altssh.bitbucket.org:443/m3kan1cal/stoic-serverless-awsapi.git
+    git clone ssh://git@ssh.github.com:443/stoicbear/serverless-awsapi.git
     ```
 
 3. Install `npm` packages and dependencies.
