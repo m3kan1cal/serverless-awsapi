@@ -26,4 +26,4 @@ def test_beacon_responds_with_valid_payload_when_invalid_data(monkeypatch):
     with pytest.raises(TypeError) as exc:
         respond(200, bytes("bad dictionary", "utf-8"))
         
-        assert "is not JSON serializable" in str(exc.value)
+    assert "is not JSON serializable" in str(exc.value)
