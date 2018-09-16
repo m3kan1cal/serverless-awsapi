@@ -2,7 +2,7 @@ import os
 import time
 
 import pytest
-from moto import mock_dynamodb2
+# from moto import mock_dynamodb2
 from pytest_mock import mocker
 
 from tests.unit import config, dynamodb_table
@@ -20,7 +20,7 @@ test_globals = {
 }
 
 
-@mock_dynamodb2
+# @mock_dynamodb2
 def test_search_by_user_returns_valid_structure_when_valid_data(dynamodb_table):
     model = NoteModel(dynamodb_table)
     items = model.search_by_user(test_globals["user_id"])
@@ -35,7 +35,7 @@ def test_search_by_user_returns_valid_structure_when_valid_data(dynamodb_table):
         assert "updatedAt" not in item
 
 
-@mock_dynamodb2
+# @mock_dynamodb2
 def test_search_by_notebook_returns_valid_structure_when_valid_data(dynamodb_table):
     model = NoteModel(dynamodb_table)
     items = model.search_by_notebook(test_globals["notebook"])

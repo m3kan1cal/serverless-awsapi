@@ -11,11 +11,17 @@ phases:
     commands:
       - echo "Entered install phase..."
       - apt-get update && apt-get upgrade -y
+      # Set up Node.js for Serverless
       - apt-get install -y build-essential
       - curl -sL https://deb.nodesource.com/setup_8.x | bash -
       - apt-get install -y nodejs
+      # Set up pip, pipenv for Python project
       - python3 -m pip install pip awscli pipenv --upgrade
       - npm i && npm i -g serverless && pipenv install --dev
+      # Set up DynamoDB local for testing
+      - /usr/local/bin/dockerd-entrypoint.sh
+      - docker image pull amazon/dynamodb-local
+      - docker container run -p 8000:8000 -d amazon/dynamodb-local
     finally:
       - echo "Exited install phase..."
   pre_build:

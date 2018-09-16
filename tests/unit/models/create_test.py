@@ -3,7 +3,7 @@ import time
 
 import pytest
 from pytest_mock import mocker
-from moto import mock_dynamodb2
+# from moto import mock_dynamodb2
 
 from functions.models.note import NoteModel
 from tests.unit import dynamodb_table
@@ -22,7 +22,7 @@ test_globals = {
 }
 
 
-@mock_dynamodb2
+# @mock_dynamodb2
 def test_create_returns_valid_structure_when_valid_data(dynamodb_table):
     model = NoteModel(dynamodb_table)
     item = model.save(user_id=test_globals["user_id"], notebook=test_globals["notebook"],
