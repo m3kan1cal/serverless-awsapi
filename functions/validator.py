@@ -59,9 +59,10 @@ def check_id(event):
     except (ValueError, KeyError):
         logging.error(
             "Validation failed: 'id' not in a valid format or missing.")
-        raise ex.RequestUrlIdNotSetException(
-            "Validation failed: 'id' not in a valid format or missing.")
-    
+        # raise ex.RequestUrlIdNotSetException(
+        #     "Validation failed: 'id' not in a valid format or missing.")
+        raise
+
     finally:
         if url_id is not None and url_id is not "":
             return url_id
