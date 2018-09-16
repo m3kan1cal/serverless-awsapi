@@ -11,6 +11,9 @@ import functions.validator as val
 
 def test_raises_exception_when_env_var_region_not_found(monkeypatch):
     with pytest.raises(ex.AwsRegionNotSetException) as exc:
+        monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
+        monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
+        
         val.check_region()
 
     assert "'AWS_DEFAULT_REGION'" in str(exc.value)
@@ -18,6 +21,8 @@ def test_raises_exception_when_env_var_region_not_found(monkeypatch):
 
 def test_raises_exception_when_env_var_dynamodb_not_found(monkeypatch, config):
     with pytest.raises(ex.DynamoDbTableNotSetException) as exc:
+        monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
+        
         monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
         val.check_dynamodb()
 

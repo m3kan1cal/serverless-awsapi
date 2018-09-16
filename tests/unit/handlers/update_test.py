@@ -25,9 +25,6 @@ test_globals = {
 
 
 def test_update_returns_valid_response_structure_when_valid_data(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-    
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
@@ -67,9 +64,6 @@ def test_update_returns_valid_response_structure_when_valid_data(monkeypatch, ht
 
 
 def test_update_returns_valid_response_structure_when_invalid_data(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-    
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
@@ -101,7 +95,6 @@ def test_read_returns_status_code_500_when_aws_region_not_set(monkeypatch, http_
 
 
 def test_read_returns_status_code_500_when_dynamodb_table_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
     monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
 
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
@@ -111,9 +104,6 @@ def test_read_returns_status_code_500_when_dynamodb_table_not_set(monkeypatch, h
 
 
 def test_read_returns_status_code_400_when_request_id_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
@@ -134,9 +124,6 @@ def test_read_returns_status_code_400_when_request_id_not_set(monkeypatch, http_
 
 
 def test_create_returns_status_code_400_when_request_body_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
@@ -146,9 +133,6 @@ def test_create_returns_status_code_400_when_request_body_not_set(monkeypatch, h
 
 
 def test_create_returns_status_code_400_when_request_body_not_json(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
@@ -159,9 +143,6 @@ def test_create_returns_status_code_400_when_request_body_not_json(monkeypatch, 
 
 
 def test_create_returns_status_code_400_when_required_props_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-    
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 

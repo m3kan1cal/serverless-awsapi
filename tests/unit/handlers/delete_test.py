@@ -94,7 +94,6 @@ def test_delete_returns_status_code_500_when_aws_region_not_set(monkeypatch, htt
 
 
 def test_delete_returns_status_code_500_when_dynamodb_table_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
     monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
     
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
@@ -104,9 +103,6 @@ def test_delete_returns_status_code_500_when_dynamodb_table_not_set(monkeypatch,
 
 
 def test_delete_returns_status_code_400_when_request_id_not_set(monkeypatch, http_event, config):
-    monkeypatch.delenv("AWS_DEFAULT_REGION", raising=False)
-    monkeypatch.delenv("DYNAMODB_TABLE", raising=False)
-    
     monkeypatch.setenv("AWS_DEFAULT_REGION", config["aws"]["region"])
     monkeypatch.setenv("DYNAMODB_TABLE", config["aws"]["dynamodb"]["table"])
 
