@@ -119,10 +119,10 @@ If you're a fan of using Docker for spinning up quick development environments, 
     vim ./tests/config.yml
     ```
 
-8. Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+8. Change the API url fixture values in `./tests/api/__init__.py` to match what your domain should be.
 
     ```bash
-    vim ./tests/rest/__init__.py
+    vim ./tests/api/__init__.py
     ```
 
 9. Run the unit tests to verify they are passing.
@@ -150,7 +150,7 @@ If you're a fan of using Docker for spinning up quick development environments, 
 14. At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
     ```bash
-    pytest tests/rest
+    pytest tests/api
     ```
 
 15. If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
@@ -396,10 +396,10 @@ Get the DynamoDB Local Docker image and start a container following the steps he
 vim ./tests/config.yml
 ```
 
-Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+Change the API url fixture values in `./tests/api/__init__.py` to match what your domain should be.
 
 ```bash
-vim ./tests/rest/__init__.py
+vim ./tests/api/__init__.py
 ```
 
 Run the unit tests to verify they are passing.
@@ -411,7 +411,7 @@ pytest tests/unit
 If you've already deployed the AWS resources, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
 ```bash
-pytest tests/rest
+pytest tests/api
 ```
 
 If all our tests are passing now, then we have a working microservice with an interface via API Gateway.

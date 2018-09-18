@@ -6,7 +6,7 @@ import json
 import pytest
 
 import functions.validator as val
-from tests.rest import api_notes_url
+from tests.api import api_notes_url
 
 
 # Module scoped variables for simple unit testing.

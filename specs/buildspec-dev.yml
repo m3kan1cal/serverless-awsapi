@@ -26,8 +26,8 @@ phases:
       - echo "Exited install phase..."
   pre_build:
     commands:
-      - echo "Entered pre_build phase..."
-      # Set up DynamoDB local for testing
+      - echo "Entered pre_build phase..."# Set up DynamoDB local for testing
+      # Build and run DynamoDB local for testing
       - docker image pull amazon/dynamodb-local
       - docker container run -p 8000:8000 -d amazon/dynamodb-local
       # Run unit tests against DynamoDB local
@@ -45,6 +45,6 @@ phases:
     commands:
       - echo "Entered post_build phase..."
       # Run integration/API tests against AWS resources via HTTP
-      - pipenv run pytest tests/rest
+      - pipenv run pytest tests/api
     finally:
       - echo "Exited post_build phase..."

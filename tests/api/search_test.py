@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from tests.rest import api_users_url
-from tests.rest import api_notebooks_url
+from tests.api import api_users_url
+from tests.api import api_notebooks_url
 import functions.validator as val
 
 
