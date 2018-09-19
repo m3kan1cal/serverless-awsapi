@@ -13,36 +13,25 @@ phases:
     commands:
       - echo "Entered install phase..."
       - apt-get update && apt-get upgrade -y
-      # Set up Node.js for Serverless framework
-      - apt-get install -y build-essential
-      - curl -sL https://deb.nodesource.com/setup_8.x | bash -
-      - apt-get install -y nodejs
       # Set up pip, pipenv for Python project
       - python3 -m pip install pip awscli pipenv --upgrade
       - npm i && npm i -g serverless && pipenv install --dev
-      # Set up Docker daemon for local use in container
-      - nohup dockerd-entrypoint.sh
     finally:
       - echo "Exited install phase..."
   pre_build:
     commands:
       - echo "Entered pre_build phase..."
-      # Build and run DynamoDB local for testing
-      - docker image pull amazon/dynamodb-local
-      - docker container run -p 8000:8000 -d amazon/dynamodb-local
-      # Run unit tests against DynamoDB local
-      - pipenv run pytest tests/unit
     finally:
       - echo "Exited pre_build phase..."
   build:
     commands:
       - echo "Entered build phase..."
-      # Deploy to AWS with serverless (sls) framework
-      - sls deploy --stage $STAGE | tee deploy-to-dev.out
     finally:
       - echo "Exited build phase..."
   post_build:
     commands:
       - echo "Entered post_build phase..."
+      # Run integration/API tests against AWS resources via HTTP
+      - pipenv run pytest tests/api
     finally:
       - echo "Exited post_build phase..."

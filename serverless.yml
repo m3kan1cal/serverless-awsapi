@@ -86,6 +86,7 @@ package:
 functions:
   create:
     handler: functions/handlers/create.create
+    # name: ${self:custom.parent}-${self:custom.service}-${self:microservice}-${opt:stage, self:provider.stage}-Function
     name: ${self:custom.parentService}-${self:service}-create-lambda-${opt:stage, self:provider.stage}
     events:
       - http:
