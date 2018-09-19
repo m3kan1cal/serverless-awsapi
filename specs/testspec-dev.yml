@@ -15,7 +15,7 @@ phases:
       - apt-get update && apt-get upgrade -y
       # Set up pip, pipenv for Python project
       - python3 -m pip install pip awscli pipenv --upgrade
-      - npm i && npm i -g serverless && pipenv install --dev
+      - pipenv install --dev
     finally:
       - echo "Exited install phase..."
   pre_build:
