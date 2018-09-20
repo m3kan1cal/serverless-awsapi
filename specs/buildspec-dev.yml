@@ -4,9 +4,9 @@ env:
   variables:
     LC_ALL: "C.UTF-8"
     LANG: "C.UTF-8"
-    STAGE: "dev"
+    STAGE: "Dev"
     AWS_DEFAULT_REGION: "us-west-2"
-    DYNAMODB_TABLE: "stoic-notes-dev"
+    DYNAMODB_TABLE: "Stoic-Athena-Notes-Dev-Table"
 
 phases:
   install:

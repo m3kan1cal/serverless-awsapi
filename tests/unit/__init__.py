@@ -71,7 +71,7 @@ def dynamodb_table(monkeypatch, config):
             GlobalSecondaryIndexes=[
                 {
                     # To get all notes for a specified user.
-                    "IndexName": "stoic-notes-dev-userid-noteid-index",
+                    "IndexName": config["aws"]["dynamodb"]["gsiuseridnoteid"],
                     "KeySchema": [
                         {
                             "AttributeName": "userId",
@@ -93,7 +93,7 @@ def dynamodb_table(monkeypatch, config):
                 },
                 {
                     # To get all notes for a specified notebook.
-                    "IndexName": "stoic-notes-dev-notebook-noteid-index",
+                    "IndexName": config["aws"]["dynamodb"]["gsinotebooknoteid"],
                     "KeySchema": [
                         {
                             "AttributeName": "notebook",

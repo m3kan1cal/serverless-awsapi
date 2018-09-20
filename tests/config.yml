@@ -1,7 +1,7 @@
 aws:
   region: us-west-2
   dynamodb:
-    table: stoic-notes-dev
+    table: Stoic-Athena-Notes-Dev-Table
     localHost: http://localhost:8000
-    gsiuseridnoteid: stoic-notes-dev-userid-noteid-index
-    gsinotebooknoteid: stoic-notes-dev-notebook-noteid-index
+    gsiuseridnoteid: Stoic-Athena-Notes-UserIdNoteId-Dev-Index
+    gsinotebooknoteid: Stoic-Athena-Notes-NotebookNoteId-Dev-Index
