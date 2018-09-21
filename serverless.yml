@@ -1,7 +1,7 @@
 # For complete reference:
 # https://serverless.com/framework/docs/providers/aws/guide/serverless.yml/
 
-service: notes
+service: Notes
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
@@ -10,10 +10,19 @@ plugins:
   - serverless-domain-manager
 
 custom:
-  parentService: stoic
+  parent: Stoic
+  suite: Athena
+  
   pythonRequirements:
     dockerizePip: true # For compiling 64-bit libraries
-  stage: ${opt:stage, self:provider.stage}
+  
+  stage: ${self:provider.stage}
+
+  environments:
+    dev: Dev
+    test: Test
+    prod: Prod
+  
   domains:
     base: stoicapis.com
     prod: athena.${self:custom.domains.base}
@@ -44,22 +53,26 @@ provider:
       - subnet-a64eb9c0
       - subnet-dfbdb496
   
-  stackName: ${self:custom.parentService}-${self:service}-stack-${opt:stage, self:provider.stage}
-  apiName: ${self:custom.parentService}-${self:service}-api-${opt:stage, self:provider.stage}
+  stackName: ${self:custom.parent}-${self:custom.suite}-${self:service}-${self:custom.environments.${self:provider.stage}}-Stack
+  apiName: ${self:custom.parent}-${self:custom.suite}-${self:service}-${self:custom.environments.${self:provider.stage}}-Api
 
-  stage: dev # Can be prod|test|dev
+  stage: ${opt:stage, 'dev'}
   region: us-west-2
   
   stackTags: # Optional CloudFormation stack tags
-    service: ${self:custom.parentService}-${self:service}
+    parent: ${self:custom.parent}
+    suite: ${self:custom.suite}
+    service: ${self:service}
   tags: # Optional service tags
-    service: ${self:custom.parentService}-${self:service}
+    parent: ${self:custom.parent}
+    suite: ${self:custom.suite}
+    service: ${self:service}
 
   environment:
-    DYNAMODB_TABLE: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_TABLE: ${self:custom.parent}-${self:custom.suite}-${self:service}-${self:custom.environments.${self:provider.stage}}-Table
     DYNAMODB_HOST: https://dynamodb.${self:provider.region}.amazonaws.com
-    DYNAMODB_GSI_USERID_NOTEID: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}-userid-noteid-index
-    DYNAMODB_GSI_NOTEBOOK_NOTEID: ${self:custom.parentService}-${self:service}-${opt:stage, self:provider.stage}-notebook-noteid-index
+    DYNAMODB_GSI_USERID_NOTEID: ${self:custom.parent}-${self:custom.suite}-${self:service}-UserIdNoteId-${self:custom.environments.${self:provider.stage}}-Index
+    DYNAMODB_GSI_NOTEBOOK_NOTEID: ${self:custom.parent}-${self:custom.suite}-${self:service}-NotebookNoteId-${self:custom.environments.${self:provider.stage}}-Index
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -86,69 +99,81 @@ package:
 functions:
   create:
     handler: functions/handlers/create.create
-    name: ${self:custom.parentService}-${self:service}-create-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-Create-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: notes
           method: post
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
   read:
     handler: functions/handlers/read.read
-    name: ${self:custom.parentService}-${self:service}-read-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-Read-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: notes/{id}
           method: get
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
   update:
     handler: functions/handlers/update.update
-    name: ${self:custom.parentService}-${self:service}-update-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-Update-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: notes/{id}
           method: put
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
   delete:
     handler: functions/handlers/delete.delete
-    name: ${self:custom.parentService}-${self:service}-delete-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-Delete-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: notes/{id}
           method: delete
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
   searchByUser:
     handler: functions/handlers/search.search_by_user
-    name: ${self:custom.parentService}-${self:service}-search-by-user-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-SearchByUser-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: users/{id}/notes
           method: get
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
   searchByNotebook:
     handler: functions/handlers/search.search_by_notebook
-    name: ${self:custom.parentService}-${self:service}-search-by-notebook-lambda-${opt:stage, self:provider.stage}
+    name: ${self:custom.parent}-${self:custom.suite}-${self:service}-SearchByNotebook-${self:custom.environments.${self:provider.stage}}-Func
     events:
       - http:
           path: notebooks/{id}/notes
           method: get
           cors: true
     tags: # Optional function tags
-      service: ${self:custom.parentService}-${self:service}
+      parent: ${self:custom.parent}
+      suite: ${self:custom.suite}
+      service: ${self:service}
 
 
 # Schema based on:

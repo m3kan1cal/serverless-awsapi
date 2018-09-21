@@ -1,3 +1,6 @@
+[develop](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=develop)
+[master](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 # Serverless Microservice via REST API with DynamoDB Store in Python
 
 This project demonstrates how to setup a **Microservice & RESTful API** for a Note-taking app, using the Serverless framework and AWS, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is only an example; you could use any data model or data store as a backend in true microservice fashion.
@@ -119,10 +122,10 @@ If you're a fan of using Docker for spinning up quick development environments, 
     vim ./tests/config.yml
     ```
 
-8. Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+8. Change the API url fixture values in `./tests/api/__init__.py` to match what your domain should be.
 
     ```bash
-    vim ./tests/rest/__init__.py
+    vim ./tests/api/__init__.py
     ```
 
 9. Run the unit tests to verify they are passing.
@@ -141,7 +144,7 @@ If you're a fan of using Docker for spinning up quick development environments, 
     vim ./serverless.yml
     ```
 
-13. Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
+13. Once you're done with your review of `serverless.yml` (the real magic behind this microservice), you're ready to deploy. Let's deploy to the `Dev` stage. We're using a named profile for AWS named `stoic`, but you may not need to.
 
     ```bash
     sls deploy -v --aws-profile stoic --stage dev
@@ -150,7 +153,7 @@ If you're a fan of using Docker for spinning up quick development environments, 
 14. At this point, we should be seeing CloudFormation activity and messages indicating success that our resources were deployed. To verify, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
     ```bash
-    pytest tests/rest
+    pytest tests/api
     ```
 
 15. If all our tests are passing now, then we have a working microservice with an interface via API Gateway. Now you can deploy to our `test` and `prod` stages to simulate what it would be like in a production environment.
@@ -191,172 +194,7 @@ Serverless: Validating template...
 Serverless: Updating Stack...
 Serverless: Checking Stack update progress...
 CloudFormation - UPDATE_IN_PROGRESS - AWS::CloudFormation::Stack - stoic-notes-stack-dev
-CloudFormation - CREATE_IN_PROGRESS - AWS::DynamoDB::Table - notesDynamoDbTable
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - DeleteLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::IAM::Role - IamRoleLambdaExecution
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - UpdateLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - ReadLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - SearchByUserLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::RestApi - ApiGatewayRestApi
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - SearchByNotebookLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - CreateLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::DynamoDB::Table - notesDynamoDbTable
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - DeleteLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - ReadLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - DeleteLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - ReadLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - UpdateLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::RestApi - ApiGatewayRestApi
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - SearchByNotebookLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - UpdateLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::RestApi - ApiGatewayRestApi
-CloudFormation - CREATE_IN_PROGRESS - AWS::IAM::Role - IamRoleLambdaExecution
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - SearchByNotebookLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - SearchByUserLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - SearchByUserLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::Logs::LogGroup - CreateLogGroup
-CloudFormation - CREATE_COMPLETE - AWS::Logs::LogGroup - CreateLogGroup
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooks
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsers
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooks
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsers
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceUsers
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooks
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotes
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVar
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotesIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVar
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotesIdVar
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesOptions
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceNotesIdVar
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVarNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVarNotes
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceNotebooksIdVarNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVarNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVarNotes
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarOptions
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Resource - ApiGatewayResourceUsersIdVarNotes
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesOptions
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesOptions
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesOptions
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesOptions
-CloudFormation - CREATE_COMPLETE - AWS::IAM::Role - IamRoleLambdaExecution
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - SearchByNotebookLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - ReadLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - DeleteLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - SearchByUserLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - CreateLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - UpdateLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - SearchByNotebookLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - DeleteLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - ReadLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - SearchByUserLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - UpdateLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - ReadLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Function - CreateLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - UpdateLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - SearchByUserLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - SearchByNotebookLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - DeleteLambdaFunction
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Function - CreateLambdaFunction
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - UpdateLambdaVersionme0GSR57A876455wY7Pdi8u4NdOo0LEbNI1OVmro
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - ReadLambdaVersionkoJsXhmVXXsvU4M577CRsKwjX2IW2M7K92SqasvGhGY
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - SearchByUserLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - SearchByNotebookLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - CreateLambdaVersioneEbhf2bhMy6KAOM5FngrYXjAJkHysRvPppjTMsoC0
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - ReadLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarDelete
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - CreateLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - SearchByNotebookLambdaVersion0wHAl4zuKstuKGq22FXHgUz4EeLBOLeb7jziWyZiuM
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - SearchByUserLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - ReadLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - SearchByNotebookLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarPut
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - CreateLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - DeleteLambdaVersionkhq8jGGlWbwvEpKjtsc8ulaSxsH0EEvDm6ZR8ZTd2s
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarDelete
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - UpdateLambdaVersionme0GSR57A876455wY7Pdi8u4NdOo0LEbNI1OVmro
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesGet
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarPut
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - CreateLambdaVersioneEbhf2bhMy6KAOM5FngrYXjAJkHysRvPppjTMsoC0
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodUsersIdVarNotesGet
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - UpdateLambdaVersionme0GSR57A876455wY7Pdi8u4NdOo0LEbNI1OVmro
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - CreateLambdaVersioneEbhf2bhMy6KAOM5FngrYXjAJkHysRvPppjTMsoC0
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesPost
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarDelete
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotebooksIdVarNotesGet
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesIdVarPut
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - SearchByNotebookLambdaVersion0wHAl4zuKstuKGq22FXHgUz4EeLBOLeb7jziWyZiuM
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - ReadLambdaVersionkoJsXhmVXXsvU4M577CRsKwjX2IW2M7K92SqasvGhGY
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - SearchByNotebookLambdaVersion0wHAl4zuKstuKGq22FXHgUz4EeLBOLeb7jziWyZiuM
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - DeleteLambdaVersionkhq8jGGlWbwvEpKjtsc8ulaSxsH0EEvDm6ZR8ZTd2s
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Method - ApiGatewayMethodNotesPost
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - DeleteLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - ReadLambdaVersionkoJsXhmVXXsvU4M577CRsKwjX2IW2M7K92SqasvGhGY
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - DeleteLambdaVersionkhq8jGGlWbwvEpKjtsc8ulaSxsH0EEvDm6ZR8ZTd2s
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Method - ApiGatewayMethodNotesPost
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - DeleteLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - UpdateLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Permission - UpdateLambdaPermissionApiGateway
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - SearchByUserLambdaVersion8ysaefzCBNVKKZUXqgDt6TZu17QmPDxnziwTn7p0hUI
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Deployment - ApiGatewayDeployment1536542303605
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::Deployment - ApiGatewayDeployment1536542303605
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::Deployment - ApiGatewayDeployment1536542303605
-CloudFormation - CREATE_IN_PROGRESS - AWS::Lambda::Version - SearchByUserLambdaVersion8ysaefzCBNVKKZUXqgDt6TZu17QmPDxnziwTn7p0hUI
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Version - SearchByUserLambdaVersion8ysaefzCBNVKKZUXqgDt6TZu17QmPDxnziwTn7p0hUI
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::BasePathMapping - pathmapping
-CloudFormation - CREATE_IN_PROGRESS - AWS::ApiGateway::BasePathMapping - pathmapping
-CloudFormation - CREATE_COMPLETE - AWS::ApiGateway::BasePathMapping - pathmapping
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - SearchByUserLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - ReadLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - SearchByNotebookLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - CreateLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - DeleteLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::Lambda::Permission - UpdateLambdaPermissionApiGateway
-CloudFormation - CREATE_COMPLETE - AWS::DynamoDB::Table - notesDynamoDbTable
-CloudFormation - UPDATE_COMPLETE_CLEANUP_IN_PROGRESS - AWS::CloudFormation::Stack - stoic-notes-stack-dev
-CloudFormation - UPDATE_COMPLETE - AWS::CloudFormation::Stack - stoic-notes-stack-dev
-Serverless: Stack update finished...
-Service Information
-service: notes
-stage: dev
-region: us-west-2
-stack: stoic-notes-stack-dev
-api keys:
-  None
-endpoints:
-  POST - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/notes
-  GET - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/notes/{id}
-  PUT - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/notes/{id}
-  DELETE - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/notes/{id}
-  GET - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/users/{id}/notes
-  GET - https://0lrzqvyna7.execute-api.us-west-2.amazonaws.com/dev/notebooks/{id}/notes
-functions:
-  create: notes-dev-create
-  read: notes-dev-read
-  update: notes-dev-update
-  delete: notes-dev-delete
-  searchByUser: notes-dev-searchByUser
-  searchByNotebook: notes-dev-searchByNotebook
-
+..........
 Stack Outputs
 DeleteLambdaFunctionQualifiedArn: arn:aws:lambda:us-west-2:750444023825:function:stoic-notes-delete-lambda-dev:12
 SearchByUserLambdaFunctionQualifiedArn: arn:aws:lambda:us-west-2:750444023825:function:stoic-notes-search-by-user-lambda-dev:7
@@ -396,10 +234,10 @@ Get the DynamoDB Local Docker image and start a container following the steps he
 vim ./tests/config.yml
 ```
 
-Change the API url fixture values in `./tests/rest/__init__.py` to match what your domain should be.
+Change the API url fixture values in `./tests/api/__init__.py` to match what your domain should be.
 
 ```bash
-vim ./tests/rest/__init__.py
+vim ./tests/api/__init__.py
 ```
 
 Run the unit tests to verify they are passing.
@@ -411,7 +249,7 @@ pytest tests/unit
 If you've already deployed the AWS resources, it's time to run the integration tests against the API endpoints that are exposed through API Gateway.
 
 ```bash
-pytest tests/rest
+pytest tests/api
 ```
 
 If all our tests are passing now, then we have a working microservice with an interface via API Gateway.

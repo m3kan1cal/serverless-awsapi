@@ -19,9 +19,9 @@ ENV AWS_ACCESS_KEY_ID ""
 ENV AWS_SECRET_ACCESS_KEY ""
 
 ENV DYNAMODB_HOST https://dynamodb.us-west-2.amazonaws.com
-ENV DYNAMODB_TABLE stoic-notes-dev
-ENV DYNAMODB_GSI_USERID_NOTEID stoic-notes-dev-userid-noteid-index
-ENV DYNAMODB_GSI_NOTEBOOK_NOTEID stoic-notes-dev-notebook-noteid-index
+ENV DYNAMODB_TABLE Stoic-Athena-Notes-Dev-Table
+ENV DYNAMODB_GSI_USERID_NOTEID Stoic-Athena-Notes-UserIdNoteId-Dev-Index
+ENV DYNAMODB_GSI_NOTEBOOK_NOTEID Stoic-Athena-Notes-NotebookNoteId-Dev-Index
 
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8

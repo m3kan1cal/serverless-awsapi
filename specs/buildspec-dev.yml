@@ -4,16 +4,16 @@ env:
   variables:
     LC_ALL: "C.UTF-8"
     LANG: "C.UTF-8"
-    STAGE: "dev"
+    STAGE: "Dev"
     AWS_DEFAULT_REGION: "us-west-2"
-    DYNAMODB_TABLE: "stoic-notes-dev"
+    DYNAMODB_TABLE: "Stoic-Athena-Notes-Dev-Table"
 
 phases:
   install:
     commands:
       - echo "Entered install phase..."
       - apt-get update && apt-get upgrade -y
-      # Set up Node.js for Serverlessn framework
+      # Set up Node.js for Serverless framework
       - apt-get install -y build-essential
       - curl -sL https://deb.nodesource.com/setup_8.x | bash -
       - apt-get install -y nodejs
@@ -27,7 +27,7 @@ phases:
   pre_build:
     commands:
       - echo "Entered pre_build phase..."
-      # Set up DynamoDB local for testing
+      # Build and run DynamoDB local for testing
       - docker image pull amazon/dynamodb-local
       - docker container run -p 8000:8000 -d amazon/dynamodb-local
       # Run unit tests against DynamoDB local
@@ -44,7 +44,5 @@ phases:
   post_build:
     commands:
       - echo "Entered post_build phase..."
-      # Run integration/API tests against AWS resources via HTTP
-      - pipenv run pytest tests/rest
     finally:
       - echo "Exited post_build phase..."

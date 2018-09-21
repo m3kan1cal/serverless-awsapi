@@ -2,17 +2,22 @@ import os
 
 import boto3
 
+import functions.log as log
 import functions.exceptions as ex
 import functions.validator as val
+
 from functions.beacon import respond
 from functions.models.note import NoteModel
+
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
 
 
 def create(event, context):
     """Create item in the collection."""
 
     try:
-        
+
         # Determine if required env var for region is present.
         val.check_region()
 
@@ -32,7 +37,7 @@ def create(event, context):
         # *aaS provider resources away from biz logic.
         region = os.environ["AWS_DEFAULT_REGION"]
         table = os.environ["DYNAMODB_TABLE"]
-        
+
         # Determine which DynamoDB host we need (local/remote)?
         host = val.check_dynamodb_host()
         conn = boto3.resource("dynamodb", region, endpoint_url=host)
@@ -42,8 +47,9 @@ def create(event, context):
         note = NoteModel(conn_table)
         item = note.save(data["userId"], data["notebook"], data["text"])
 
+        logger.info("Note created: {}".format(item))
         return respond(201, item)
-    
+
     except ex.AwsRegionNotSetException as exc:
         return respond(500, {"error": str(exc)})
 
@@ -52,7 +58,7 @@ def create(event, context):
 
     except ex.RequestBodyNotSetException as exc:
         return respond(400, {"error": str(exc)})
-        
+
     except ex.RequestBodyNotJsonException as exc:
         return respond(400, {"error": str(exc)})
 

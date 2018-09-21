@@ -3,17 +3,22 @@ import os
 
 import boto3
 
+import functions.log as log
 import functions.exceptions as ex
 import functions.validator as val
 from functions.beacon import respond
 from functions.models.note import NoteModel
 
 
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
+
+
 def search_by_user(event, context):
     """Return the collection of items based on query."""
 
     try:
-        
+
         # Determine if required env var for region is present.
         val.check_region()
 
@@ -27,7 +32,7 @@ def search_by_user(event, context):
         # *aaS provider resources away from biz logic.
         region = os.environ["AWS_DEFAULT_REGION"]
         table = os.environ["DYNAMODB_TABLE"]
-        
+
         # Determine which DynamoDB host we need (local/remote)?
         host = val.check_dynamodb_host()
         conn = boto3.resource("dynamodb", region, endpoint_url=host)
@@ -35,10 +40,12 @@ def search_by_user(event, context):
 
         # Build our model and read.
         note = NoteModel(conn_table)
-        item = note.search_by_user(user_id)
+        items = note.search_by_user(user_id)
 
-        return respond(200, item)
-    
+        logger.info("Notes for user found: {} [{}]".format(
+            user_id, len(items)))
+        return respond(200, items)
+
     except ex.AwsRegionNotSetException as exc:
         return respond(500, {"error": str(exc)})
 
@@ -56,7 +63,7 @@ def search_by_notebook(event, context):
     """Return the collection of items based on query."""
 
     try:
-        
+
         # Determine if required env var for region is present.
         val.check_region()
 
@@ -70,7 +77,7 @@ def search_by_notebook(event, context):
         # *aaS provider resources away from biz logic.
         region = os.environ["AWS_DEFAULT_REGION"]
         table = os.environ["DYNAMODB_TABLE"]
-        
+
         # Determine which DynamoDB host we need (local/remote)?
         host = val.check_dynamodb_host()
         conn = boto3.resource("dynamodb", region, endpoint_url=host)
@@ -78,10 +85,12 @@ def search_by_notebook(event, context):
 
         # Build our model and read.
         note = NoteModel(conn_table)
-        item = note.search_by_notebook(notebook)
+        items = note.search_by_notebook(notebook)
 
-        return respond(200, item)
-    
+        logger.info("Notes for notebook found: {} [{}]".format(
+            notebook, len(items)))
+        return respond(200, items)
+
     except ex.AwsRegionNotSetException as exc:
         return respond(500, {"error": str(exc)})
 

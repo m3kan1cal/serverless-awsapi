@@ -15,6 +15,7 @@ lib64/
 parts/
 sdist/
 var/
+node_modules/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -23,12 +24,6 @@ var/
 *.pyo
 __*cache__
 .pytest_cache
-
-# Serverless directories
-.serverless
-
-# Libraries
-node_modules
 
 # IDE artifacts
 .vscode

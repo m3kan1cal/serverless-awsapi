@@ -6,13 +6,18 @@ import time
 from datetime import datetime
 
 import functions.exceptions as ex
+import functions.log as log
+
+
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
 
 
 def check_region():
     """Determine if required env var for region is present."""
 
     if "AWS_DEFAULT_REGION" not in os.environ:
-        logging.error(
+        logger.error(
             "Validation failed: 'AWS_DEFAULT_REGION' env variable not set.")
         raise ex.AwsRegionNotSetException(
             "Validation failed: 'AWS_DEFAULT_REGION' env variable not set.")
@@ -22,7 +27,7 @@ def check_dynamodb():
     """Determine if required env var for DynamoDB table is present."""
 
     if "DYNAMODB_TABLE" not in os.environ:
-        logging.error(
+        logger.error(
             "Validation failed: 'DYNAMODB_TABLE' env variable not set.")
         raise ex.DynamoDbTableNotSetException(
             "Validation failed: 'DYNAMODB_TABLE' env variable not set.")
@@ -32,7 +37,7 @@ def check_body(event):
     """Determine if required property body is present."""
 
     if "body" not in event:
-        logging.error("Validation failed: 'body' not present in http event.")
+        logger.error("Validation failed: 'body' not present in http event.")
         raise ex.RequestBodyNotSetException(
             "Validation failed: 'body' not present in http event.")
 
@@ -43,7 +48,7 @@ def check_json(event):
     try:
         return json.loads(event["body"])
     except ValueError:
-        logging.error("Validation failed: Could not parse JSON body.")
+        logger.error("Validation failed: Could not parse JSON body.")
         raise ex.RequestBodyNotJsonException(
             "Validation failed: Could not parse JSON body.")
 
@@ -57,7 +62,7 @@ def check_id(event):
         url_id = event["pathParameters"]["id"]
 
     except (ValueError, KeyError):
-        logging.error(
+        logger.error(
             "Validation failed: 'id' not in a valid format or missing.")
         raise ex.RequestUrlIdNotSetException(
             "Validation failed: 'id' not in a valid format or missing.")
@@ -67,7 +72,7 @@ def check_id(event):
             return url_id
         
         else:
-            logging.error(
+            logger.error(
                 "Validation failed: 'id' not in a valid format or missing.")
             raise ex.RequestUrlIdNotSetException(
                 "Validation failed: 'id' not in a valid format or missing.")
@@ -77,7 +82,7 @@ def check_props(data):
     """Determine if required properties are present."""
 
     if "userId" not in data or "notebook" not in data or "text" not in data:
-        logging.error(
+        logger.error(
             "Validation failed: required properties (userId, notebook, text) not present in request body.")
         raise ex.RequiredPropertiesNotSetException(
             "Validation failed: required properties (userId, notebook, text) not present in request body.")

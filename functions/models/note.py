@@ -85,7 +85,9 @@ class NoteModel:
 
         # Fetch all items from the database by index.
         items = self.table.query(
-            IndexName="stoic-notes-dev-userid-noteid-index", # @todo Make this dynamically pull from config
+            
+            # @todo Make this dynamically pull from config
+            IndexName="Stoic-Athena-Notes-UserIdNoteId-Dev-Index",
             ExpressionAttributeNames={
                 "#note_text": "text"
             },
@@ -101,7 +103,9 @@ class NoteModel:
 
         # Fetch all items from the database by index.
         items = self.table.query(
-            IndexName="stoic-notes-dev-notebook-noteid-index", # @todo Make this dynamically pull from config
+
+            # @todo Make this dynamically pull from config
+            IndexName="Stoic-Athena-Notes-NotebookNoteId-Dev-Index",
             ExpressionAttributeNames={
                 "#note_text": "text"
             },

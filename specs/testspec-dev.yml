@@ -1,0 +1,37 @@
+version: 0.2
+
+env:
+  variables:
+    LC_ALL: "C.UTF-8"
+    LANG: "C.UTF-8"
+    STAGE: "Dev"
+    AWS_DEFAULT_REGION: "us-west-2"
+    DYNAMODB_TABLE: "Stoic-Athena-Notes-Dev-Table"
+
+phases:
+  install:
+    commands:
+      - echo "Entered install phase..."
+      - apt-get update && apt-get upgrade -y
+      # Set up pip, pipenv for Python project
+      - python3 -m pip install pip awscli pipenv --upgrade
+      - pipenv install --dev
+    finally:
+      - echo "Exited install phase..."
+  pre_build:
+    commands:
+      - echo "Entered pre_build phase..."
+    finally:
+      - echo "Exited pre_build phase..."
+  build:
+    commands:
+      - echo "Entered build phase..."
+    finally:
+      - echo "Exited build phase..."
+  post_build:
+    commands:
+      - echo "Entered post_build phase..."
+      # Run integration/API tests against AWS resources via HTTP
+      - pipenv run pytest tests/api
+    finally:
+      - echo "Exited post_build phase..."

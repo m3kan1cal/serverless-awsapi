@@ -2,10 +2,15 @@ import os
 
 import boto3
 
+import functions.log as log
 import functions.exceptions as ex
 import functions.validator as val
 from functions.beacon import respond
 from functions.models.note import NoteModel
+
+
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
 
 
 def delete(event, context):
@@ -36,6 +41,7 @@ def delete(event, context):
         note = NoteModel(conn_table)
         item = note.delete(note_id)
 
+        logger.info("Note deleted: {}".format(item))
         return respond(200, item)
     
     except ex.AwsRegionNotSetException as exc:
