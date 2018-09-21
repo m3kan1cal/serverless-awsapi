@@ -2,10 +2,15 @@ import os
 
 import boto3
 
+import functions.log as log
 import functions.exceptions as ex
 import functions.validator as val
 from functions.beacon import respond
 from functions.models.note import NoteModel
+
+
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
 
 
 def update(event, context):
@@ -45,6 +50,7 @@ def update(event, context):
         note = NoteModel(conn_table)
         item = note.update(note_id, data)
 
+        logger.info("Note updated: {}".format(item))
         return respond(200, item)
 
     except ex.AwsRegionNotSetException as exc:

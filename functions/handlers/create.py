@@ -1,27 +1,16 @@
 import os
-import logging
 
 import boto3
 
+import functions.log as log
 import functions.exceptions as ex
 import functions.validator as val
+
 from functions.beacon import respond
 from functions.models.note import NoteModel
 
-
-# Set up logging levels and constructs.
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-logging.getLogger("boto").setLevel(logging.ERROR)
-logging.getLogger("botocore").setLevel(logging.ERROR)
-
-hdlr = logging.StreamHandler()
-hdlr.setLevel(logging.INFO)
-
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
+# Get our module logger.
+logger = log.setup_custom_logger("notes")
 
 
 def create(event, context):
@@ -62,25 +51,19 @@ def create(event, context):
         return respond(201, item)
 
     except ex.AwsRegionNotSetException as exc:
-        logger.error(str(exc))
         return respond(500, {"error": str(exc)})
 
     except ex.DynamoDbTableNotSetException as exc:
-        logger.error(str(exc))
         return respond(500, {"error": str(exc)})
 
     except ex.RequestBodyNotSetException as exc:
-        logger.error(str(exc))
         return respond(400, {"error": str(exc)})
 
     except ex.RequestBodyNotJsonException as exc:
-        logger.error(str(exc))
         return respond(400, {"error": str(exc)})
 
     except ex.RequiredPropertiesNotSetException as exc:
-        logger.error(str(exc))
         return respond(400, {"error": str(exc)})
 
     except Exception as exc:
-        logger.error(str(exc))
         return respond(500, {"error": str(exc)})
