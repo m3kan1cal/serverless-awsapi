@@ -1,3 +1,6 @@
+[develop](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=develop)
+[master](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 # Serverless Microservice via REST API with DynamoDB Store in Python
 
 This project demonstrates how to setup a **Microservice & RESTful API** for a Note-taking app, using the Serverless framework and AWS, allowing you to create, search, read, update and delete Notes. DynamoDB is used to store the data. This is only an example; you could use any data model or data store as a backend in true microservice fashion.
