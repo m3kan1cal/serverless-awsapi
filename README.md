@@ -1,6 +1,19 @@
+[![Serverless 1.31](https://img.shields.io/badge/serverless-1.31.0-blue.svg)](https://serverless.com/framework/docs/getting-started/)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![GitHub release](https://img.shields.io/github/release/stoicbear/serverless-awsapi.svg)](https://gitHub.com/stoicbear/serverless-awsapi/releases/)
-![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaEtybCttRW4yMHBMUnhLelluU0E4R2huM2dzRUJ3d3A3RnRRaTVSVUk1L3l4aUhWRWlPVHNraG50ZWlTbjdybzVCcS9UcVdBUy9waDN1Vm8xcFhDNUZZPSIsIml2UGFyYW1ldGVyU3BlYyI6Im5ZQkRibzkzUUpMWXRoemkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
+![](https://img.shields.io/badge/type-build-blue.svg)
+![](https://img.shields.io/badge/branch-develop-orange.svg) ![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaElxOUhnSlJ4dWVtUjN6aXpWeno3Y0VtS0NXTy9vbEtzczNVM1ZPU1d4MUZmQWNpakJzcmNURWNVNG9pbFdyMGxta2FBMjVabXNFdFVCK0dCY1ozdTdvPSIsIml2UGFyYW1ldGVyU3BlYyI6ImgrYVNxeFh4M2l4U2ZOd2QiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=develop)
+
+![](https://img.shields.io/badge/type-api%20test-blue.svg)
+![](https://img.shields.io/badge/branch-develop-orange.svg) ![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZGswSmV2M2h0TkVxQlRjZVg0a1J2Q3BJVE9uY083anZsWVRHUGhSczBjcWRONXFjMVZIVTR0YkNWUU42Tk0xWWVlWjJCTVZpb29yd2pCT0RtYzJvVDNFPSIsIml2UGFyYW1ldGVyU3BlYyI6Ijh1Q1haUTlyN1lkbmV5aGsiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=develop)
+
+![](https://img.shields.io/badge/type-build-blue.svg)
+![](https://img.shields.io/badge/branch-master-purple.svg) ![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaElxOUhnSlJ4dWVtUjN6aXpWeno3Y0VtS0NXTy9vbEtzczNVM1ZPU1d4MUZmQWNpakJzcmNURWNVNG9pbFdyMGxta2FBMjVabXNFdFVCK0dCY1ozdTdvPSIsIml2UGFyYW1ldGVyU3BlYyI6ImgrYVNxeFh4M2l4U2ZOd2QiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
+![](https://img.shields.io/badge/type-api%20test-blue.svg)
+![](https://img.shields.io/badge/branch-master-purple.svg) ![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZGswSmV2M2h0TkVxQlRjZVg0a1J2Q3BJVE9uY083anZsWVRHUGhSczBjcWRONXFjMVZIVTR0YkNWUU42Tk0xWWVlWjJCTVZpb29yd2pCT0RtYzJvVDNFPSIsIml2UGFyYW1ldGVyU3BlYyI6Ijh1Q1haUTlyN1lkbmV5aGsiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 
 # Serverless Microservice via REST API with DynamoDB Store in Python
 
