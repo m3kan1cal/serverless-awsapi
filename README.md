@@ -1,5 +1,6 @@
-[develop](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=develop)
-[master](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJ1VlN0NEFHa0N5ejZReFlwb0JidFdqbzlnOXRXTVJId2hPMmVtZHJqdjRrTUZFMlVqYXZzdldoZE5GMlJRV0ViNGh2eENtZ1hJcjhRcGRnRlpJT3gwPSIsIml2UGFyYW1ldGVyU3BlYyI6Iks3M1dZdy84VGZWNnBIeVkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![GitHub release](https://img.shields.io/github/release/stoicbear/serverless-awsapi.svg)](https://gitHub.com/stoicbear/serverless-awsapi/releases/)
+![](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiaEtybCttRW4yMHBMUnhLelluU0E4R2huM2dzRUJ3d3A3RnRRaTVSVUk1L3l4aUhWRWlPVHNraG50ZWlTbjdybzVCcS9UcVdBUy9waDN1Vm8xcFhDNUZZPSIsIml2UGFyYW1ldGVyU3BlYyI6Im5ZQkRibzkzUUpMWXRoemkiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 
 # Serverless Microservice via REST API with DynamoDB Store in Python
 
