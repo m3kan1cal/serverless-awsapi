@@ -12,6 +12,8 @@ phases:
   install:
     commands:
       - echo "Entered install phase..."
+      # Post initiation to Slack channel for Athena service
+      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*INITIATED* \`$CODEBUILD_BUILD_ID\` *API test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
       - apt-get update && apt-get upgrade -y
       # Set up pip, pipenv for Python project
       - python3 -m pip install pip awscli pipenv --upgrade
@@ -33,5 +35,7 @@ phases:
       - echo "Entered post_build phase..."
       # Run integration/API tests against AWS resources via HTTP
       - pipenv run pytest tests/api
+      # Post completion to Slack channel for Athena service
+      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*COMPLETED* \`$CODEBUILD_BUILD_ID\` *API test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
     finally:
       - echo "Exited post_build phase..."
