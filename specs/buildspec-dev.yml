@@ -27,6 +27,8 @@ phases:
   pre_build:
     commands:
       - echo "Entered pre_build phase..."
+      # Post initiation to Slack channel for Athena service
+      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*INITIATED* \`$CODEBUILD_BUILD_ID\` *build and unit test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
       # Build and run DynamoDB local for testing
       - docker image pull amazon/dynamodb-local
       - docker container run -p 8000:8000 -d amazon/dynamodb-local
@@ -45,10 +47,6 @@ phases:
     commands:
       - echo "Entered post_build phase..."
       # Post completion to Slack channel for Athena service
-      - printenv
-      - echo "{\"stage\":$STAGE\"}"
-      - echo "$STAGE"
-      - echo $STAGE
-      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*COMPLETED* \`$CODEBUILD_BUILD_ID\` *build and unit test* activity for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
+      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*COMPLETED* \`$CODEBUILD_BUILD_ID\` *build and unit test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
     finally:
       - echo "Exited post_build phase..."
