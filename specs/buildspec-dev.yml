@@ -45,6 +45,6 @@ phases:
     commands:
       - echo "Entered post_build phase..."
       # Post completion to Slack channel for Athena service
-      - curl -X POST -H 'Content-type: application/json' --data '{"text":"**COMPLETED** `Stoic-Athena-Notes-All-Build-Project` build and unit test activity for `Athena Notes Service` in `Dev` successfully."}' $SLACK_HOOK_URL
+      - curl -X POST -H 'Content-type:application/json' --data '{"text":"**COMPLETED** `Stoic-Athena-Notes-All-Build-Project` build and unit test activity for `Athena Notes Service` in `Dev` successfully."}' $SLACK_HOOK_URL
     finally:
       - echo "Exited post_build phase..."

@@ -34,6 +34,6 @@ phases:
       # Run integration/API tests against AWS resources via HTTP
       - pipenv run pytest tests/api
       # Post completion to Slack channel for Athena service
-      - curl -X POST -H 'Content-type: application/json' --data '{"text":"**COMPLETED** `Stoic-Athena-Notes-All-ApiTest-Project` API test activity for `Athena Notes Service` in `$STAGE` successfully."}' $SLACK_HOOK_URL
+      - curl -X POST -H 'Content-type:application/json' --data '{"text":"**COMPLETED** `Stoic-Athena-Notes-All-ApiTest-Project` API test activity for `Athena Notes Service` in `$STAGE` successfully."}' $SLACK_HOOK_URL
     finally:
       - echo "Exited post_build phase..."
