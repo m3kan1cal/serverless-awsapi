@@ -13,6 +13,8 @@ phases:
     commands:
       - echo "Entered install phase..."
       - apt-get update && apt-get upgrade -y
+      # Post initiation to Slack channel for Athena service
+      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*INITIATED* \`$CODEBUILD_BUILD_ID\` *build and unit test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
       # Set up Node.js for Serverless framework
       - apt-get install -y build-essential
       - curl -sL https://deb.nodesource.com/setup_8.x | bash -
@@ -27,8 +29,6 @@ phases:
   pre_build:
     commands:
       - echo "Entered pre_build phase..."
-      # Post initiation to Slack channel for Athena service
-      - curl -X POST -H "Content-type:application/json" --data "{\"text\":\"*INITIATED* \`$CODEBUILD_BUILD_ID\` *build and unit test* phases for \`Stoic Athena Notes Service\`, initiated by \`$CODEBUILD_INITIATOR\`, in \`$STAGE\` successfully. Building from \`$CODEBUILD_SOURCE_REPO_URL\` | \`$CODEBUILD_SOURCE_VERSION\`.\"}" $SLACK_HOOK_URL
       # Build and run DynamoDB local for testing
       - docker image pull amazon/dynamodb-local
       - docker container run -p 8000:8000 -d amazon/dynamodb-local
